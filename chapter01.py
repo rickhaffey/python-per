@@ -131,3 +131,68 @@ name = sys.stdin.readline()
 name = input("Enter your name: ")
 
 # ## STRINGS
+
+# string literals can be created using single, double, or triple quotes
+a = 'Hello'
+b = "World"
+c = """I said "Hello"!"""
+
+# triple quotes allow internal line-breaks and quote characters without escapes
+c = """one
+ two
+  three
+   four"""
+
+# characters and fragments can be extracted from strings via indexing / slicing
+a = "Hello World"
+b = a[4]  # "o"
+c = a[1:3]  # "el"
+d = a[:5]  # "Hello"
+e = a[6:]  # "World"
+
+# concatenate strings with "+"
+f = d + e  # "HelloWorld"
+
+# to convert strings to numeric values, use functions like "int" and "float"
+a = "42"
+b = "99"
+c = int(a) + int(b)  # 141 (integer, not string)
+
+# convert non-strings to strings with "str", "repr", or "format"
+# - str: returns the "informal", nicely printable string representation
+# -repr: returns the string representation you'd type into a program to
+#       represent the object
+a = 42
+str(a)
+repr(a)
+format(a, "d")
+
+# ## LISTS
+vegetables = ["carrot", "lettuce", "broccoli", "pea"]
+
+# indexing
+veg = vegetables[1]  # access -> "lettuce"
+vegetables[1] = "kale"  # update
+
+# append
+vegetables.append("onion")
+
+# insert
+vegetables.insert(2, "pepper")
+
+# slicing
+vegetables[:2]  # ["carrot", "kale"]
+vegetables[3:5] = ["cauliflower", "green bean"]
+
+# concatenate with "+"
+letters = ["a", "b", "c"] + ["d", "e", "f"]
+
+# create empty
+l = []
+l = list()
+
+# can contain any kind of object, and multiple types within a single list
+variety = [1, "two", 3.0, [4, 4.0, "four", 2 * 2], (5, 5, 5, 5, 5)]
+
+# nested values can be referenced with indexing more than once
+variety[3][2]  # "four"
