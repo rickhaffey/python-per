@@ -123,7 +123,7 @@ f.write("some example output, v2\n")
 f.close()
 
 # standard output and input streams also provide functionality similar to files
-import sys
+import sys  # noqa: E402
 sys.stdout.write("Enter your name: ")
 name = sys.stdin.readline()
 
@@ -188,8 +188,8 @@ vegetables[3:5] = ["cauliflower", "green bean"]
 letters = ["a", "b", "c"] + ["d", "e", "f"]
 
 # create empty
-l = []
-l = list()
+mylist = []
+mylist = list()
 
 # can contain any kind of object, and multiple types within a single list
 variety = [1, "two", 3.0, [4, 4.0, "four", 2 * 2], (5, 5, 5, 5, 5)]
