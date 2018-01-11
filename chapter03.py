@@ -1,4 +1,4 @@
-import sys
+#import sys
 
 # ## 3. Types and Objects
 
@@ -81,6 +81,8 @@ c[0] = 2.0  # < ref count = 0
 
 # current reference count can be obtained with `sys.getrefcount`:
 
+import sys  # noqa : E402
+
 
 def print_a_refs():
     print("sys.getrefcount(a): {}".format(sys.getrefcount(a)))
@@ -114,3 +116,115 @@ del r
 
 
 # ## references and copies
+a = [1, 2, 3, 4]
+b = a  # b now points to the same object that a points to
+b[2] = 42  # this changes the same underlying object behind both 'a' and 'b'
+print(a[2])  # 42
+
+# two types of copy operations
+
+# - shallow copy: new object, but populates it with references to the same
+#       items contained in the original objects
+a = [1, 2, [3, 4]]
+b = list(a)  # creates a shallow copy
+print("b is a: {}".format(b is a))
+
+# appending/removing to a shallow copy doesn't affect original
+b.append(42)
+print("a: {}".format(a))
+print("b: {}".format(b))
+
+# modify a (mutable) object contained by the copy will change the object in the
+# original, too
+b[2][1] = 99
+print("a: {}".format(a))
+print("b: {}".format(b))
+
+# - deep copy: creates a new object, and recursively copies all the objects
+#       it contains
+#   - no built-in operation
+#   - use `copy` module in standard library: `copy.deepcopy`
+import copy  # noqa : E402
+a = [1, 2, [3, 4]]
+b = copy.deepcopy(a)
+b[2][1] = 43
+print("a: {}".format(a))
+print("b: {}".format(b))
+
+# ## first-class objects
+# - all objects that can be named by an identifier have equal status
+# - all objects that can be named can be treated as data
+data = {}
+
+# basic
+data["number"] = 42  # int
+data["text"] = "hello"  # string
+
+# more complex
+data["func"] = abs  # builtin function
+data["mod"] = sys  # module
+data["error"] = ValueError  # type
+data["append"] = a.append  # function of another object
+
+# this allow for compact, flexible code
+line = "GOOG,100,490.10"
+types = [str, int, float]
+fields = [ty(val) for ty, val in zip(types, line.split(","))]
+print(fields)
+
+# ## built-in types for representing data:
+
+# ### The `None` Type
+#   `type(None)` - The null object `None`
+# - denotes a null object
+# - exactly 1
+# - often used to indicate when default params aren't overridden in function
+#    call
+# - has no attributes
+# - evaluates to False in Boolean expressions
+
+# ### Numeric Types
+#   `int` - integer
+#       - whole numbers
+#       - range: unlimited (except by available memory)
+#       - acts like py2 `long` type
+#   `float` - floating point
+#       - represented using native double-precision (64-bit) rep of machine
+#       - typically this is IEEE 754
+#         - approximately 17 digits of precision
+#         - exponent in the range –308 to 308
+#         - same as `double` type in C
+#       - for more precise space / precision control, look to using numpy
+#   `complex` - complex number
+#       - represented as pair of floating-point numbers
+#       - `z.real` : real portion
+#       - `z.imag` : imaginary part
+#   `bool` - Boolean
+#   - two values: (`True` => 1 or `False` => 0)
+# - all immutable
+# - all (except Boolean) are signed
+# - to support a common interface / mixed arithmetic, some shared attributes:
+#   - x.numerator (int)
+#   - x.denominator (int)
+#   - x.real (int + float)
+#   - x.imag (int + float)
+#   - x.conjugate (int + float)
+#   - x.as_integer_ratio (float)
+#   - x.is_integer (float)
+# - additional numeric types in library modules (e.g. `decimal`, `fractions`,
+#   etc.)
+
+# >>>> RESUME HERE <<<<<
+
+# ### Sequences
+#   `str` - character string
+#   `list` - list
+#   `tuple` - tuple
+#   `range` - a range of integers
+
+# ### Mapping
+#   `dict` - dictionary
+
+# ### Sets
+#   `set` - mutable set
+#   `frozenset` - immutable set
