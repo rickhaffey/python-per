@@ -217,10 +217,87 @@ print(fields)
 # >>>> RESUME HERE <<<<<
 
 # ### Sequences
+
+# - ordered sets of objects indexed by integers
+# - support iteration
 #   `str` - character string
+#       - sequence of characters
+#       - immutable
 #   `list` - list
+#       - sequence of arbitrary python objects
+#       - allow insertion, deletion, substitution
 #   `tuple` - tuple
+#       - sequence of arbitrary python objects
+#       - immutable
 #   `range` - a range of integers
+
+# operations available on all sequences:
+a = [1, 2, 3, 4, 5]
+a[3]
+a[2:4]
+a[1:5:2]
+len(a)
+min(a)
+max(a)
+sum(a)
+all(a)  # checks whether all are true
+any(a)  # checks whether any are true
+
+# operations available on mutable sequences (e.g. lists)
+a[3] = 42
+a[2:4] = [99] * 2
+a[1:5:2] = [1001] * 2
+del a[3]
+del a[2:4]
+del a[1:5:2]
+
+# ### lists
+
+# convert an iterable to a list with `list()`
+# - if iterable is already a list, creates a shallow copy
+i = range(3)
+a = list(i)
+a.append(42)
+a.extend([43, 44, 45])
+a.count(42)  # counts occurrences of 42 in a
+a.index(42)  # returns index of first instance of 42 found in a
+a.insert(3, 99)  # insert 99 at index 3
+a.pop()
+a.remove(99)
+a.reverse()  # reverse (in place)
+
+
+def strange_sort(x):
+    if(x <= 3):
+        return x
+    else:
+        return -x
+
+
+a.sort(key=strange_sort, reverse=True)
+print(a)
+
+# ### strings
+
+# - Strings are immutable sequences of Unicode code points
+# - string instance methods don't modify the string, but return a result
+s = "The quick brown fox jumps over the lazy dog."
+print(s.capitalize())
+print(s.center(80))  # also accepts a padding character
+s.count("the")  # counts occurrences of substring
+# s.decode  # py2
+# s.encode  # py2
+s.endswith("dog.")
+s.expandtabs()  # convert tabs to spaces
+s.find("quick")  # returns the index of first instance of "quick"
+#                   (or -1 if not found)
+s.index("quick")  # returns the index of first instance of "quick"
+#                   (or ValueError if not found)
+
+# >>> RESUME HERE <<<<
+# TODO: break out strings to a separate file: chapter03.strings.py
+# TODO: drive notes of python docs and method listing
+
 
 # ### Mapping
 #   `dict` - dictionary
