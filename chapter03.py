@@ -1,5 +1,3 @@
-#import sys
-
 # ## 3. Types and Objects
 
 # every piece of data stored in a py program is an Objects
@@ -276,28 +274,6 @@ def strange_sort(x):
 
 a.sort(key=strange_sort, reverse=True)
 print(a)
-
-# ### strings
-
-# - Strings are immutable sequences of Unicode code points
-# - string instance methods don't modify the string, but return a result
-s = "The quick brown fox jumps over the lazy dog."
-print(s.capitalize())
-print(s.center(80))  # also accepts a padding character
-s.count("the")  # counts occurrences of substring
-# s.decode  # py2
-# s.encode  # py2
-s.endswith("dog.")
-s.expandtabs()  # convert tabs to spaces
-s.find("quick")  # returns the index of first instance of "quick"
-#                   (or -1 if not found)
-s.index("quick")  # returns the index of first instance of "quick"
-#                   (or ValueError if not found)
-
-# >>> RESUME HERE <<<<
-# TODO: break out strings to a separate file: chapter03.strings.py
-# TODO: drive notes of python docs and method listing
-
 
 # ### Mapping
 #   `dict` - dictionary
