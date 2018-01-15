@@ -19,18 +19,19 @@ word.capitalize()
 # casefold() converts it to "ss".
 # The casefolding algorithm is described in section 3.13 of the
 # Unicode Standard.
-word.casefold()
+ex = "German lowercase letter 'ß'"
+ex.lower()
+ex.casefold()
 
 # Return centered in a string of length width. Padding is
 # done using the specified fillchar (default is an ASCII space).
 # The original string is returned if width is less than or equal to len(s).
-word.center(80, fillchar='-')
-
+word.center(80, '-')
 
 #  Return the number of non-overlapping occurrences of substring sub in the
 # range [start, end]. Optional arguments start and end are interpreted as in
 # slice notation.
-sentence.count("the")
+sentence.count("he")
 
 #  Return an encoded version of the string as a bytes object. Default encoding
 # is 'utf-8'. errors may be given to set a different error handling scheme. The
@@ -39,7 +40,8 @@ sentence.count("the")
 # 'xmlcharrefreplace', 'backslashreplace' and any other name registered via
 # codecs.register_error(), see section Error Handlers. For a list of possible
 # encodings, see section Standard Encodings.
-word.encode(encoding="utf-8", errors="strict")
+for b in word.encode(encoding="utf-8", errors="strict"):
+    print(b)
 
 #  Return True if the string ends with the specified suffix, otherwise return
 # False. suffix can also be a tuple of suffixes to look for. With optional
@@ -89,11 +91,11 @@ try:
 except ValueError:
     print("foo not found")
 
-
 #  Return true if all characters in the string are alphanumeric and there is at
 # least one character, false otherwise. A character c is alphanumeric if one of
 # the following returns True: c.isalpha(), c.isdecimal(), c.isdigit(), or
 # c.isnumeric().
+"not alnum".isalnum()
 word.isalnum()
 
 #  Return true if all characters in the string are alphabetic and there is at
@@ -102,6 +104,7 @@ word.isalnum()
 # with general category property being one of “Lm”, “Lt”, “Lu”, “Ll”, or “Lo”.
 # Note that this is different from the “Alphabetic” property defined in the
 # Unicode Standard.
+"not alpha".isalpha()
 word.isalpha()
 
 #  Return true if all characters in the string are decimal characters and there
@@ -109,7 +112,10 @@ word.isalpha()
 # can be used to form numbers in base 10, e.g. U+0660, ARABIC-INDIC DIGIT ZERO.
 # Formally a decimal character is a character in the Unicode General Category
 # “Nd”.
-word.isdecimal()
+ex = '10\u00B2'
+"12345".isdecimal()
+"123.45".isdecimal()
+ex.isdecimal()
 
 #  Return true if all characters in the string are digits and there is at least
 # one character, false otherwise. Digits include decimal characters and digits
@@ -117,30 +123,32 @@ word.isdecimal()
 # This covers digits which cannot be used to form numbers in base 10, like the
 # Kharosthi numbers. Formally, a digit is a character that has the property
 # value Numeric_Type=Digit or Numeric_Type=Decimal.
-word.isdigit()
+"1234".isdigit()
+ex.isdigit()
 
-
-#
-# str.isidentifier()
 #  Return true if the string is a valid identifier according to the language
 # definition, section Identifiers and keywords.
-#
-#  Use keyword.iskeyword() to test for reserved identifiers such as def and
-# class.
-#
-# str.islower()
+"myvar".isidentifier()
+"#bar!bat".isidentifier()
+
+import keyword  # noqa
+keyword.iskeyword("foo")
+keyword.iskeyword("if")
+
 #  Return true if all cased characters [4] in the string are lowercase and
 # there is at least one cased character, false otherwise.
-#
-# str.isnumeric()
+"abcd".islower()
+"Abcd".islower()
+
 #  Return true if all characters in the string are numeric characters, and
 # there is at least one character, false otherwise. Numeric characters include
 # digit characters, and all characters that have the Unicode numeric value
 # property, e.g. U+2155, VULGAR FRACTION ONE FIFTH. Formally, numeric
 # characters are those with the property value Numeric_Type=Digit,
 # Numeric_Type=Decimal or Numeric_Type=Numeric.
-#
-# str.isprintable()
+"12345".isnumeric()
+word.isnumeric()
+
 #  Return true if all characters in the string are printable or the string is
 # empty, false otherwise. Nonprintable characters are those characters defined
 # in the Unicode character database as “Other” or “Separator”, excepting the
@@ -148,54 +156,55 @@ word.isdigit()
 # characters in this context are those which should not be escaped when repr()
 # is invoked on a string. It has no bearing on the handling of strings written
 # to sys.stdout or sys.stderr.)
-#
-# str.isspace()
+word.isprintable()
+bell = str(chr(7))
+bell.isprintable()
+
 #  Return true if there are only whitespace characters in the string and there
 # is at least one character, false otherwise. Whitespace characters are those
 # characters defined in the Unicode character database as “Other” or
 # “Separator” and those with bidirectional property being one of “WS”, “B”, or
 # “S”.
-#
-# str.istitle()
+word.isspace()
+" \t\n".isspace()
+
 #  Return true if the string is a titlecased string and there is at least one
 # character, for example uppercase characters may only follow uncased
 # characters and lowercase characters only cased ones. Return false otherwise.
-#
-# str.isupper()
+sentence.istitle()
+"The Quick Brown Fox".istitle()
+
 #  Return true if all cased characters [4] in the string are uppercase and
 # there is at least one cased character, false otherwise.
-#
-# str.join(iterable)
+word.isupper()
+"QUICK".isupper()
+
 #  Return a string which is the concatenation of the strings in iterable. A
 # TypeError will be raised if there are any non-string values in iterable,
 # including bytes objects. The separator between elements is the string
 # providing this method.
-#
-# str.ljust(width[, fillchar])
+",".join(["this", "is", "a", "CSV"])
+
 #  Return the string left justified in a string of length width. Padding is
 # done using the specified fillchar (default is an ASCII space). The original
 # string is returned if width is less than or equal to len(s).
-#
-# str.lower()
+word.ljust(80, "-")
+
 #  Return a copy of the string with all the cased characters [4] converted to
 # lowercase.
-#
 #  The lowercasing algorithm used is described in section 3.13 of the Unicode
 # Standard.
-#
-# str.lstrip([chars])
+word.lower()
+"ThIs Is A mEsS".lower()
+
 #  Return a copy of the string with leading characters removed. The chars
 # argument is a string specifying the set of characters to be removed. If
 # omitted or None, the chars argument defaults to removing whitespace. The
 # chars argument is not a prefix; rather, all combinations of its values are
 # stripped:
-#
-# >>>
-# >>> '   spacious   '.lstrip()
-# 'spacious   '
-# >>> 'www.example.com'.lstrip('cmowz.')
-# 'example.com'
-# static str.maketrans(x[, y[, z]])
+comment = "# ## ### something profound"
+comment.lstrip(" #")
+
 # This static method returns a translation table usable for str.translate().
 #
 #  If there is only one argument, it must be a dictionary mapping Unicode
@@ -205,27 +214,41 @@ word.isdigit()
 #
 #  If there are two arguments, they must be strings of equal length, and in the
 # resulting dictionary, each character in x will be mapped to the character at
-# the same position in y. If there is a third argument, it must be a string,
-# whose characters will be mapped to None in the result.
+# the same position in y.
 #
-# str.partition(sep)
+#  If there is a third argument, it must be a string,
+# whose characters will be mapped to None in the result.
+table = str.maketrans("abcd", "!@#$")
+sentence.translate(table)
+
 #  Split the string at the first occurrence of sep, and return a 3-tuple
 # containing the part before the separator, the separator itself, and the part
 # after the separator. If the separator is not found, return a 3-tuple
 # containing the string itself, followed by two empty strings.
-#
-# str.replace(old, new[, count])
+"header|trailer".partition("|")
+"uh-oh".partition("|")
+
 #  Return a copy of the string with all occurrences of substring old replaced
 # by new. If the optional argument count is given, only the first count
 # occurrences are replaced.
-#
-# str.rfind(sub[, start[, end]])
+"two two three three three four four four four".replace("three", "REPLACED")
+"two two three three three four four four four".replace("three", "REPLACED", 2)
+
 #  Return the highest index in the string where substring sub is found, such
 # that sub is contained within s[start:end]. Optional arguments start and end
 # are interpreted as in slice notation. Return -1 on failure.
-#
-# str.rindex(sub[, start[, end]])
+"three three three".rfind("three")
+"three three three".find("three")
+
 # Like rfind() but raises ValueError when the substring sub is not found.
+"three three three".rindex("three")
+try:
+    "three three three".rindex("two")
+except ValueError:
+    print("two not found")
+
+# >>> RESUME HERE <<<
+
 #
 # str.rjust(width[, fillchar])
 #  Return the string right justified in a string of length width. Padding is
