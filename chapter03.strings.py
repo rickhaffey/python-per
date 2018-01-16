@@ -227,6 +227,7 @@ sentence.translate(table)
 # containing the string itself, followed by two empty strings.
 "header|trailer".partition("|")
 "uh-oh".partition("|")
+"one|two|three|four".partition("|")  # ('one', '|', 'two|three|four')
 
 #  Return a copy of the string with all occurrences of substring old replaced
 # by new. If the optional argument count is given, only the first count
@@ -247,77 +248,64 @@ try:
 except ValueError:
     print("two not found")
 
-# >>> RESUME HERE <<<
-
-#
-# str.rjust(width[, fillchar])
 #  Return the string right justified in a string of length width. Padding is
 # done using the specified fillchar (default is an ASCII space). The original
 # string is returned if width is less than or equal to len(s).
-#
-# str.rpartition(sep)
+word.rjust(80, "-")
+
 #  Split the string at the last occurrence of sep, and return a 3-tuple
 # containing the part before the separator, the separator itself, and the part
 # after the separator. If the separator is not found, return a 3-tuple
 # containing two empty strings, followed by the string itself.
-#
-# str.rsplit(sep=None, maxsplit=-1)
+"one|two|three|four".rpartition("|")  # ('one|two|three', '|', 'four')
+"uh-oh".rpartition("|")
+
 #  Return a list of the words in the string, using sep as the delimiter string.
 # If maxsplit is given, at most maxsplit splits are done, the rightmost ones.
 # If sep is not specified or None, any whitespace string is a separator. Except
 # for splitting from the right, rsplit() behaves like split() which is
 # described in detail below.
-#
-# str.rstrip([chars])
+"one,two,three".rsplit(",")
+"one,two,three".rsplit(",", 1)  # ['one,two', 'three']
+
 #  Return a copy of the string with trailing characters removed. The chars
 # argument is a string specifying the set of characters to be removed. If
 # omitted or None, the chars argument defaults to removing whitespace. The
 # chars argument is not a suffix; rather, all combinations of its values are
 # stripped:
-#
-# >>>
-# >>> '   spacious   '.rstrip()
-# '   spacious'
-# >>> 'mississippi'.rstrip('ipz')
-# 'mississ'
+"The end.  ".rstrip(" .")
+
 # str.split(sep=None, maxsplit=-1)
 #  Return a list of the words in the string, using sep as the delimiter string.
 # If maxsplit is given, at most maxsplit splits are done (thus, the list will
 # have at most maxsplit+1 elements). If maxsplit is not specified or -1, then
 # there is no limit on the number of splits (all possible splits are made).
-#
+"one,two,three".split(",")
+"one,two,three".split(",", 1)  # ['one', 'two,three']
+
 #  If sep is given, consecutive delimiters are not grouped together and are
 # deemed to delimit empty strings (for example, '1,,2'.split(',') returns ['1',
 # '', '2']). The sep argument may consist of multiple characters (for example,
 # '1<>2<>3'.split('<>') returns ['1', '2', '3']). Splitting an empty string
 # with a specified separator returns [''].
-#
-# For example:
-#
-# >>>
-# >>> '1,2,3'.split(',')
-# ['1', '2', '3']
-# >>> '1,2,3'.split(',', maxsplit=1)
-# ['1', '2,3']
-# >>> '1,2,,3,'.split(',')
-# ['1', '2', '', '3', '']
+"one<>two<><>four".split("<>")  # ['one', 'two', '', 'four']
+",one,two,three,".split(",")  # ['', 'one', 'two', 'three', '']
+
 #  If sep is not specified or is None, a different splitting algorithm is
 # applied: runs of consecutive whitespace are regarded as a single separator,
 # and the result will contain no empty strings at the start or end if the
 # string has leading or trailing whitespace. Consequently, splitting an empty
 # string or a string consisting of just whitespace with a None separator
 # returns [].
-#
-# For example:
-#
-# >>>
-# >>> '1 2 3'.split()
-# ['1', '2', '3']
-# >>> '1 2 3'.split(maxsplit=1)
-# ['1', '2 3']
-# >>> '   1   2   3   '.split()
-# ['1', '2', '3']
-# str.splitlines([keepends])
+
+"\tone  two    three\nfour\n\nfive   ".split()
+# ['one', 'two', 'three', 'four', 'five']
+
+" one two three four ".split(maxsplit=1)
+# ['one', 'two three four ']
+" one two three four ".split(sep=' ', maxsplit=1)
+# ['', 'one two three four ']
+
 #  Return a list of the lines in the string, breaking at line boundaries. Line
 # breaks are not included in the resulting list unless keepends is given and
 # true.
@@ -337,80 +325,49 @@ except ValueError:
 # \x85	Next Line (C1 Control Code)
 # \u2028	Line Separator
 # \u2029	Paragraph Separator
-# Changed in version 3.2: \v and \f added to list of line boundaries.
-#
-# For example:
-#
-# >>>
-# >>> 'ab c\n\nde fg\rkl\r\n'.splitlines()
-# ['ab c', '', 'de fg', 'kl']
-# >>> 'ab c\n\nde fg\rkl\r\n'.splitlines(keepends=True)
-# ['ab c\n', '\n', 'de fg\r', 'kl\r\n']
+"one\ntwo\rthree\r\n".splitlines()  # ['one', 'two', 'three']
+"one\ntwo\rthree\r\n".splitlines(keepends=True)
+# ['one\n', 'two\r', 'three\r\n']
+
 #  Unlike split() when a delimiter string sep is given, this method returns an
 # empty list for the empty string, and a terminal line break does not result in
 # an extra line:
-#
-# >>>
-# >>> "".splitlines()
-# []
-# >>> "One line\n".splitlines()
-# ['One line']
-# For comparison, split('\n') gives:
-#
-# >>>
-# >>> ''.split('\n')
-# ['']
-# >>> 'Two lines\n'.split('\n')
-# ['Two lines', '']
-# str.startswith(prefix[, start[, end]])
+"\n".splitlines()  # ['']
+"".splitlines()  # []
+
 #  Return True if string starts with the prefix, otherwise return False. prefix
 # can also be a tuple of prefixes to look for. With optional start, test string
 # beginning at that position. With optional end, stop comparing string at that
 # position.
-#
-# str.strip([chars])
+sentence.startswith("The")
+
 #  Return a copy of the string with the leading and trailing characters
 # removed. The chars argument is a string specifying the set of characters to
 # be removed. If omitted or None, the chars argument defaults to removing
 # whitespace. The chars argument is not a prefix or suffix; rather, all
 # combinations of its values are stripped:
-#
-# >>>
-# >>> '   spacious   '.strip()
-# 'spacious'
-# >>> 'www.example.com'.strip('cmowz.')
-# 'example'
+"*!*!*!WOW!*!*!*".strip("!*")  # "WOW"
+
 #  The outermost leading and trailing chars argument values are stripped from
 # the string. Characters are removed from the leading end until reaching a
 # string character that is not contained in the set of characters in chars. A
-# similar action takes place on the trailing end. For example:
-#
-# >>>
-# >>> comment_string = '#....... Section 3.2.1 Issue #32 .......'
-# >>> comment_string.strip('.#! ')
-# 'Section 3.2.1 Issue #32'
-# str.swapcase()
+# similar action takes place on the trailing end.
+
 #  Return a copy of the string with uppercase characters converted to lowercase
 # and vice versa. Note that it is not necessarily true that
 # s.swapcase().swapcase() == s.
-#
-# str.title()
+"ThIs Is A mEsS".swapcase()  # 'tHiS iS a MeSs'
+
 #  Return a titlecased version of the string where words start with an
 # uppercase character and the remaining characters are lowercase.
-#
-# For example:
-#
-# >>>
-# >>> 'Hello world'.title()
-# 'Hello World'
+"one two three four five".title()
+
 #  The algorithm uses a simple language-independent definition of a word as
 # groups of consecutive letters. The definition works in many contexts but it
 # means that apostrophes in contractions and possessives form word boundaries,
 # which may not be the desired result:
-#
-# >>>
-# >>> "they're bill's friends from the UK".title()
-# "They'Re Bill'S Friends From The Uk"
+"he's america's vip".title()  # "He'S America'S Vip"
+
 # A workaround for apostrophes can be constructed using regular expressions:
 #
 # >>>
@@ -420,10 +377,7 @@ except ValueError:
 # ...                   lambda mo: mo.group(0)[0].upper() +
 # ...                              mo.group(0)[1:].lower(),
 # ...                   s)
-# ...
-# >>> titlecase("they're bill's friends.")
-# "They're Bill's Friends."
-# str.translate(table)
+
 #  Return a copy of the string in which each character has been mapped through
 # the given translation table. The table must be an object that implements
 # indexing via __getitem__(), typically a mapping or sequence. When indexed by
@@ -437,8 +391,11 @@ except ValueError:
 #
 #  See also the codecs module for a more flexible approach to custom character
 # mappings.
-#
-# str.upper()
+mapping = str.maketrans("abcdefg", "1234567")
+sentence.translate(mapping)
+# 'Th5 qui3k 2rown 6ox jumps ov5r th5 l1zy 4o7.'
+
+
 #  Return a copy of the string with all the cased characters [4] converted to
 # uppercase. Note that str.upper().isupper() might be False if s contains
 # uncased characters or if the Unicode category of the resulting character(s)
@@ -446,17 +403,13 @@ except ValueError:
 #
 #  The uppercasing algorithm used is described in section 3.13 of the Unicode
 # Standard.
-#
-# str.zfill(width)
+"one two three".upper()
+
 #  Return a copy of the string left filled with ASCII '0' digits to make a
 # string of length width. A leading sign prefix ('+'/'-') is handled by
 # inserting the padding after the sign character rather than before. The
 # original string is returned if width is less than or equal to len(s).
-#
-# For example:
-#
-# >>>
-# >>> "42".zfill(5)
-# '00042'
-# >>> "-42".zfill(5)
-# '-0042'
+"42".zfill(5)
+"-42".zfill(5)  # "-0042"
+"+42".zfill(5)  # "+0042"
+"-42".rjust(5, '0')  # "00-42"
