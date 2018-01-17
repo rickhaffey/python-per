@@ -212,8 +212,6 @@ print(fields)
 # - additional numeric types in library modules (e.g. `decimal`, `fractions`,
 #   etc.)
 
-# >>>> RESUME HERE <<<<<
-
 # ### Sequences
 
 # - ordered sets of objects indexed by integers
@@ -275,8 +273,87 @@ def strange_sort(x):
 a.sort(key=strange_sort, reverse=True)
 print(a)
 
+# see chapter03.strings.py for details about string sequences
+
+# ## range
+for x in range(10):
+    print(x, end='')  # 0123456789
+
+for x in range(1, 10, 2):
+    print(x)  # 13579
+
+
 # ### Mapping
-#   `dict` - dictionary
+# - represents a collection of objects referenced by a collection of keys
+# - unordered
+# - can be indexed ('keyed') by numbers, strings, and other objects
+# - mutable
+
+# ##`dict` - dictionary
+# - only built in mapping type
+# - Python's version of a hash table / associative array
+# - can use any immutable object as a key
+# - can't use lists, dictionaries, or tuples containing immutable objects
+d = {
+  "a": 1,
+  "b": "two",
+  "c": [3],
+  "d": 4
+}
+
+len(d)
+d["a"]
+d["b"] = "TWO"
+del d["d"]
+"c" in d  # => True
+
+d2 = d.copy()
+d2.clear()
+
+d3 = dict.fromkeys(["foo", "bar", "baz", "bat"], 42)
+# {'bar': 42, 'bat': 42, 'baz': 42, 'foo': 42}
+
+d.get("b")  # => "two"
+d.get("foo")  # => None
+d.get("foo", "bar")  # => "bar"
+
+{"a": 1, "b": 2, "c": 3}.items()
+# => [('c', 3), ('b', 2), ('a', 1)]
+# note: type is `dict_items`
+
+{"a": 1, "b": 2, "c": 3}.keys()
+# => ['c', 'b', 'a']
+# note: type is `dict_keys`
+
+{"a": 1, "b": 2, "c": 3}.values()
+# => [3, 2, 1])
+# note: type is `dict_values`
+
+# ## pop
+d = {"a": 1, "b": 2, "c": 3}
+d.pop("b")  # => 2, d = {"a": 1, "c": 3}
+
+d = {"a": 1, "b": 2, "c": 3}
+d.pop("d", 42)  # => 42, d = {"a": 1, "b": 2, "c": 3}
+
+d = {"a": 1, "b": 2, "c": 3}
+d.pop("d")  # raises KeyError, d = {"a": 1, "b": 2, "c": 3}
+
+d = {"a": 1, "b": 2, "c": 3}
+d.popitem()
+# equivalent to calling pop with a randomly selected key value
+# if d is empty, raises a KeyError
+
+d = {"a": 1, "b": 2, "c": 3}
+d.setdefault("d", 4)  # => 4; d = {"a": 1, "b": 2, "c": 3, "d": 4}
+d.setdefault("d", 99)  # => 4; d = {"a": 1, "b": 2, "c": 3, "d": 4}
+
+d1 = {"a": 1, "b": 2, "c": 3}
+d2 = {"a": 11, "c": 33, "d": 44}
+d1.update(d2)
+# d1 = {'a': 11, 'b': 2, 'c': 33, 'd': 44}
+
+# >>> RESUME @ Set Types <<<
 
 # ### Sets
 #   `set` - mutable set
