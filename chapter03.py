@@ -353,8 +353,87 @@ d2 = {"a": 11, "c": 33, "d": 44}
 d1.update(d2)
 # d1 = {'a': 11, 'b': 2, 'c': 33, 'd': 44}
 
-# >>> RESUME @ Set Types <<<
-
 # ### Sets
 #   `set` - mutable set
 #   `frozenset` - immutable set
+
+# - unordered collection of unique items
+# - no indexing
+# - no slicing
+# - no key values
+# - item place in set must be immutable
+
+# ## methods on all sets
+s = set("abcdefg")
+len(s)
+s.copy()
+s.difference(set("abc"))  # => {'d','e','f','g'}
+s.intersection(set("abc"))  # => {'a','b','c'}
+s.isdisjoint(set("qrs"))  # => True
+s.issubset(set("abcdefgh"))  # => True
+s.issuperset(set("ab"))  # => True
+s.symmetric_difference(set("defghij"))  # => {'a', 'b', 'c', 'h', 'i', 'j'}
+set("abc").union(set("123"))  # => {'a','b','c','1','2','3'}
+
+# ## NOTE - parameter to all of these can be any iterable of immutable objects
+set("abc").union([1, 2, 3, 4])  # => {1, 2, 'b', 3, 4, 'a', 'c'}
+
+# ## methods on mutable sets
+# - all modify set in-place
+s = set("abc")
+s.add("X")  # => {'X', 'a', 'b', 'c'}
+s.difference_update("az")  # => {'X', 'b', 'c'}
+s.intersection_update("aXdb")  # => {'X', 'b'}
+s.symmetric_difference_update("bY")  # => {'X', 'Y'}
+
+s = set("abcX")
+s.discard("X")  # => {'a', 'b', 'c'}
+s.discard("X")  # => no change
+
+s = set("abcX")
+s.remove("X")  # =>  {'a', 'b', 'c'}
+s.remove("X")  # => raises KeyError
+
+s.update("aceg")  # => {'a','b','c','e','g'}
+
+s.clear()
+
+# ## Built-In Types for Representing Program Structure
+
+# - Callable
+#   - types.BuiltinFunctionType
+#   - type
+#   - object
+#   - types.FunctionType
+#   - types.MethodType
+# - Modules
+#   - types.ModuleType
+# - Classes
+#   - object
+# - Types
+#   - type
+
+
+# ## callable types
+# - support function call operation
+
+# ### user defined functions
+# - via `def` or `lambda`
+
+
+def f(x, y=0):
+    """return the sum of the two input values"""
+    return x + y
+
+
+lambda x, y: x + y
+
+f.__doc__  # => 'return the sum of the two input values'
+f.__name__  # => 'f'
+f.__dict__  # => {}
+f.__code__  # => <code object f at 0x106162420, file "<ipython-input-38-f361d85c9fb4>", line 1>  # noqa
+f.__defaults__  # => (0,)
+f.__globals__  # => returns a dictionary defining the global namespace
+f.__closure__  # => Tuple containing data related to nested scopes
+
+## >>> RESUME @ "Methods" <<<
