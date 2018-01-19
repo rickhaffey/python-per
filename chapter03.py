@@ -436,4 +436,116 @@ f.__defaults__  # => (0,)
 f.__globals__  # => returns a dictionary defining the global namespace
 f.__closure__  # => Tuple containing data related to nested scopes
 
-## >>> RESUME @ "Methods" <<<
+# ## Methods
+
+# - functions defined inside class definition
+# - three common types:
+#   - instance
+#   - class
+#   - static
+
+
+class Foo(object):
+    def instance_method(self, arg):
+        """
+        - operates on an instance of the class
+        - first argument ('self' in this case) is the instance
+        - represented by object of type `types.MethodType`
+        """
+        pass
+
+    @classmethod
+    def class_method(cls, arg):
+        """
+        - operates on the class itself as an object
+        - first argument ('cls' in this case) is the class itself
+        - represented by object of type `types.MethodType`
+        """
+        pass
+
+    @staticmethod
+    def static_method(arg):
+        """
+        - a function that happens to be packaged inside a class
+        - it doesn't receive an instance or class as its first argument
+        """
+        pass
+
+
+# invoking instance or class method is a two step process
+f = Foo()
+meth = f.instance_method  # => 1) look up the method as an attribute
+# - meth above is a "bound method"
+#   - a callable object
+#   - wraps both a function and the associated instance
+#   - when called, the instance is passed as the first parameter
+meth(42)  # => 2) invoke the method
+type(meth)  # => method
+
+# some available attributes on method type:
+meth.__doc__  # doc string
+meth.__name__  # name of the method
+meth.__class__  # => method
+meth.__func__  # function object implementing the method
+meth.__self__  # the bound instance
+
+# method lookup can occur on the class itself
+umeth = Foo.instance_method
+# - umeth above is an "unbound method"
+#   - a callable object
+#   - wraps the function
+#   - implicitly expect an instance of the proper type to be passed
+#     as the first parameter, but in P3, that isn't enforced
+umeth(f, 99)
+type(umeth)  # => function
+
+# functions have some of the same attributes as method,
+# except __func__ and __self__ are not defined
+
+# ## Built-in Functions and Methods
+
+# - represent functions and methods implemented in C and C++
+# - available attributes:
+len.__doc__
+len.__name__
+len.__self__  # => <module 'builtins' (built-in)>
+
+[].append.__self__  # => []
+
+# ## Classes and Instances as Callables
+
+# - class object called as a function to create new instances
+#   - arguments are passed through to the `__init__()` method of the class
+f2 = Foo()
+
+# - instances can emulate a function by definining a `__call__()` method
+
+
+class Bar(object):
+    def __call__(self, arg):
+        print(arg)
+
+
+b = Bar()
+b("test of the __call__ function")  # => test of the __call__ function
+
+
+# ## Classes, Types, and Instances
+# - class definition produces an object of type `type`
+type(Bar)  # => type
+
+# - attributes of type
+Bar.__doc__
+Bar.__name__
+Bar.__bases__  # => tuple of base classes, (object,)
+Bar.__dict__  # => dictionary holding class methods and variables
+Bar.__module__  # => module name in which class is defined
+
+# for an instance of a class, it's type is the class that defined it
+type(b)  # => __main__.Bar
+
+# instances have the following special attributes
+b.__class__  # => class to which instance belongs
+b.__dict__  # => dict holding instance data
+
+# ## >>>> RESUME @ "Modules" <<<
