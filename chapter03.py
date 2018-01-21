@@ -548,4 +548,74 @@ type(b)  # => __main__.Bar
 b.__class__  # => class to which instance belongs
 b.__dict__  # => dict holding instance data
 
-# ## >>>> RESUME @ "Modules" <<<
+# ## Module Type
+
+# - container that holds objects loaded with the `import` statement
+# - `import foo` => name "foo" assigned to the imported module
+# - namespace defined that's a dictionary named `__dict__`
+# - referencing a module attribute with dot notation translates to dict lookup:
+#   - foo.bar => foo.__dict__["bar"]
+#   - sim. for assignment to attributes
+
+import chapter01 as foo  # noqa
+foo.__dict__
+sys.__doc__
+sys.__name__
+sys.__file__
+# sys.__path__  # => only for packages
+
+# ## Builtin Types for Interpreter Internals
+# - exposed internals of the interpreter
+# - can be useful in tooling and framework development
+
+# ### Code Objects
+
+# - represent raw byte-compiled executable code: bytecode
+# - typically returned by built-in `compile` function
+source = """
+for x in range(10):
+    print("value: {}".format(x))
+"""
+codeObj = compile(source, "<string>", "exec")
+
+codeObj.co_code  # => b"x'\x00e\x00\x00d\x00\x00\x83\x01\x00D]\x19..."
+# (string representing raw bytecode)
+codeObj.co_consts  # => (10, 'value: {}', None)
+codeObj.co_names  # => ('range', 'x', 'print', 'format')
+
+
+# ## Frame & Traceback Objects
+# ## Frame:
+# - represent execution frames
+# ## Traceback:
+# - created when an exception occurs; provide stack trace info
+def bottom():
+    return 1 / 0
+
+
+def middle():
+    return bottom()
+
+
+def top():
+    return middle()
+
+
+try:
+    top()
+except ZeroDivisionError:
+    _, _, t = sys.exc_info()
+    print(dir(t))
+
+while(t):
+    f = t.tb_frame
+    print("{} in {}".format(f.f_code.co_filename, f.f_code.co_name))
+    t = t.tb_next
+
+# ==>
+# <ipython-input-103-6390464d02b0> in <module>
+# <ipython-input-84-1a5d4b7eb2f4> in top
+# <ipython-input-84-1a5d4b7eb2f4> in middle
+# <ipython-input-84-1a5d4b7eb2f4> in bottom
+
+# >>> RESUME @Generator Objects <<<<
