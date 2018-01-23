@@ -445,7 +445,7 @@ f.__closure__  # => Tuple containing data related to nested scopes
 #   - static
 
 
-class Foo(object):
+class Foo:
     def instance_method(self, arg):
         """
         - operates on an instance of the class
@@ -521,7 +521,7 @@ f2 = Foo()
 # - instances can emulate a function by definining a `__call__()` method
 
 
-class Bar(object):
+class Bar:
     def __call__(self, arg):
         print(arg)
 
@@ -618,4 +618,156 @@ while(t):
 # <ipython-input-84-1a5d4b7eb2f4> in middle
 # <ipython-input-84-1a5d4b7eb2f4> in bottom
 
-# >>> RESUME @Generator Objects <<<<
+
+# ## Generator objects
+# - defined when a function makes use of the `yield` keyword
+# - generator obj serves as both an iterator and container for info about the
+#   gen function itself
+
+def my_gen():
+    x = 0
+    while x < 10:
+        yield x
+        x += 1
+
+
+g = my_gen()
+
+g.gi_code  # => code object for the generator
+g.gi_frame  # => execution frame
+
+g.__next__()  # => execute until next `yield` statement
+g.send(123)
+g.close()  # => closes a generator by raising `GeneratorExit` in gen fx
+g.throw(NameError)  # => raise an exception in the generator
+
+# ## Slice Objects
+# - used to represent slices
+
+s = slice(10, 20)
+s.start  # => 10
+s.stop  # => 20
+s.step  # => None
+s.indices(15)  # => (10, 15, 1)  represents how slice would be applied:
+# my_list[10:15:1]
+
+# ## Ellipsis Object
+# - used to represent the presence of an ellipsis in an index lookup
+# - singleton
+# - no attributes; evaluates to True
+
+
+class CustomCollection():
+    def __getitem__(self, index):
+        print(index)
+
+
+cc = CustomCollection()
+cc["a", ..., "z"]  # => ('a', Ellipsis, 'z')
+
+
+# ## Object Behavior and Special Methods
+# - all basic interpreter operations are implemented through special object
+#   methods
+# - names are preceded and follwed by double underscore: (__foo__)
+# - automatically triggered by interpreter as program executes
+# - e.g
+#   - `x + y` is mapped to `x.__add__(y)`
+#   - `x[y]` is mapped to `x.__getitem__(y)`
+
+# ## Object Creation and Destruction
+
+
+class Foo:
+    def __new__(cls):
+        print("in Foo.__new__")
+
+
+x = Foo.__new__(Foo)
+
+
+class Bar:
+    def __init(self, value):
+        self.value = value
+        print("in Bar.__init__")
+
+
+b = Bar(42)
+
+# - note: it's rare to define __new__ or __del__ in user defined objects
+
+# ## Object String Representation
+# - `__repr__` : returns a string representation that can be evaluated to re-
+#            create the object
+# - `__str__` : can be a more concise, printable string for the user
+# - `__format__` : called by `format` function
+
+
+class Foo:
+    def __repr__(self):
+        return "Foo()"
+
+    def __str__(self):
+        return "<Foo>"
+
+    def __format__(self, _spec):
+        return "(Formatted Foo)"
+
+
+f = Foo()
+repr(f)  # => "Foo()"
+str(f)  # => "<Foo>"
+"my foo is {}".format(f)  # => 'my foo is (Formatted Foo)'
+
+# ## Object Comparison and Ordering
+
+# - __bool__  # => used for truth-value testing (falls back to __len__ if
+#   not defined)
+# - __hash__  # => computes hash; don't define this on immutable types
+
+# - __lt__  # => supports '<'
+# - __le__  # => supports '<='
+# - __gt__  # => supports '>'
+# - __ge__  # => supports '>='
+# - __eq__  # => supports '=='
+# - __ne__  # => supports '!='
+
+
+class Foo:
+    def __init__(self, value):
+        self.value = value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __lt__(self, other):
+        # reverse the ordering
+        return self.value.__gt__(other.value)
+
+    def __str__(self):
+        return "<Foo({})".format(self.value)
+
+    def __repr__(self):
+        return "Foo({})".format(self.value)
+
+
+foos = [Foo(i) for i in range(10)]
+min_foo = min(foos)  # => Foo(9)
+sorted(foos)  # => [Foo(9), Foo(8), Foo(7), ..., Foo(0)]
+
+# ## Type Checking
+# __instancecheck__(cls, object)  # => redefine `isinstance(object, cls)`
+# __subclasscheck__(cls, sub)  # => redefine `issublcass(sub, cls)`
+
+# NOTE that these methods are looked up on the type (metaclass) of a class.
+# They cannot be defined as class methods in the actual class. This is
+# consistent with the lookup of special methods that are called on instances,
+# only in this case the instance is itself a class.
+
+# ## Attribute Access
+
+# __getattribute__  # => returns the attribute
+# __getattr__  # =>  returns the attribute, or raises AttributeError if not
+#               found
+
+# >>>resume @ Attribute Wrapping and Descriptors
