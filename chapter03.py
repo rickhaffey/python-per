@@ -770,4 +770,54 @@ sorted(foos)  # => [Foo(9), Foo(8), Foo(7), ..., Foo(0)]
 # __getattr__  # =>  returns the attribute, or raises AttributeError if not
 #               found
 
-# >>>resume @ Attribute Wrapping and Descriptors
+# ## Attribute Wrapping and Descriptors
+# - associated with descriptor objects
+# - optional, and rarely need to be defined
+
+# __get__
+# __set__
+# __delete__
+
+# ## Sequence and Mapping Methods
+# - methods used by objects that want to emulate sequence and mapping objects
+
+# __len__  # called by `len()`
+# __getitem__  # supports [] retrieval
+# __setitem__  # supports [] assignment
+# __delitem__  # supports `del`
+# __contains__  # supports `in` operator
+
+# note that __getitem__, __setitem__, and __delitem__ can also accept slice
+# objects as the key
+
+
+class MyCollection:
+    def __init__(self, values):
+        self.values = values
+
+    def __len__(self):
+        return len(self.values)
+
+    def __getitem__(self, key):
+        return self.values.__getitem__(key)
+
+    def __contains__(self, key):
+        return self.values.__contains__(key)
+
+    # etc...
+
+
+c = MyCollection("ABCDEF")
+len(c)  # => 6
+c[3]  # => 'D'
+c[:4]  # => 'ABCD'
+"Z" in c  # => False
+# etc...
+
+# ## Iteration
+
+# __iter__  # => returns an iterator object
+#       # (iterator must implement __next__)
+#       # supports `for` statement and other iteration operations
+
+# ## mathematical operations -> see chapter03.math.py
