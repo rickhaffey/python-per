@@ -820,4 +820,128 @@ c[:4]  # => 'ABCD'
 #       # (iterator must implement __next__)
 #       # supports `for` statement and other iteration operations
 
-# ## mathematical operations -> see chapter03.math.py
+# ## mathematical operations -> (also see chapter03.math.py)
+# - evaluated from left to right
+# - methods beginning with 'r' support reversed operands;
+#   - called if the left operand doesn't implement the operation
+#   - e.g.: if `x + y` doesn't support `x.__add__(y)` then iterpreter
+#     tries `y.__radd__(x)`
+# - methods beginning with 'i' support in-place operations
+#   - e.g. x += 1, etc.
+# - __int__, __long__, __float__, and __complex__ convert object to that type
+
+
+class SpecialString:
+    def __init__(self, value):
+        self.value = value
+
+    def __int__(self):
+        # note: very fragile example
+        return {
+            'one': 1,
+            'two': 2,
+            'three': 3
+        }.get(self.value, -1)
+
+
+two = SpecialString("two")
+print("int(two) = {}".format(int(two)))  # => 'int(two) = 2'
+
+
+# ## Callable Interface
+# -- __call__ => allow invoking object like a function
+
+
+class MyCallable:
+    def __call__(self, foo, bar):
+        print("You called me with '{}' and '{}'".format(foo, bar))
+
+
+mc = MyCallable()
+mc("foo", "bar")  # => "You called me with 'foo' and 'bar'"
+
+# ## Context Management Protocol
+# __enter__  # => called when `with` statement executes; return value assigned
+#               to value in `as var`
+# __exit__  # => called when leaving `with` block
+
+
+class MyContextMgr:
+    def __init__(self, value):
+        self.value = value
+
+    def __enter__(self):
+        print("entering context ...")
+        return self
+
+    def __exit__(self, type, value, tb):
+        if(type):
+            print("\ttype: {}\n\tvalue: {}\n\ttb: {}".format(type, value, tb))
+        print("exiting context ...")
+
+
+with MyContextMgr("foo") as m:
+    print("context value: {}".format(m.value))
+    raise Exception("fubar")
+
+#   entering context ...
+#   context value: foo
+#   	type: <class 'Exception'>
+#   	value: fubar
+#   	tb: <traceback object at 0x10376e148>
+#   exiting context ...
+#   ---------------------------------------------------------------------------
+#   Exception                                 Traceback (most recent call last)
+#   <ipython-input-28-7e5c0f705b42> in <module>()
+#         1 with MyContextMgr("foo") as m:
+#         2     print("context value: {}".format(m.value))
+#   ----> 3     raise Exception("fubar")
+#
+#   Exception: fubar
+
+# ## Object Inspection and `dir()`
+# __dir__ # => return an overridden list of names to return with `dir` call
+
+
+class Regular:
+    pass
+
+
+class Irregular:
+    def __dir__(self):
+        return ['nothing']
+
+
+r = Regular()
+dir(r)
+
+#   ['__class__',
+#    '__delattr__',
+#    '__dict__',
+#    '__dir__',
+#    '__doc__',
+#    '__eq__',
+#    '__format__',
+#    '__ge__',
+#    '__getattribute__',
+#    '__gt__',
+#    '__hash__',
+#    '__init__',
+#    '__le__',
+#    '__lt__',
+#    '__module__',
+#    '__ne__',
+#    '__new__',
+#    '__reduce__',
+#    '__reduce_ex__',
+#    '__repr__',
+#    '__setattr__',
+#    '__sizeof__',
+#    '__str__',
+#    '__subclasshook__',
+#    '__weakref__']
+
+i = Irregular()
+dir(i)
+
+#   ['nothing']
