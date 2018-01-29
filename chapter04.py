@@ -67,5 +67,88 @@ lower() < x() < upper()
 # 2) else, if either is floating-point, others are coerced to floating-point
 # 3) else, operands are integers and there's no coercion
 
-# >>> RESUME @ <<<<
 # ## Operations on Sequences
+
+s = "one two three"
+l = ["one", "two", "three"]
+t = ("one", "two", "three")
+
+s + "four five"  # => 'one two threefour five'
+l + ["four", "five"]  # => ['one', 'two', 'three', 'four', 'five']
+
+[1, 2, 3] * 2  # => [1, 2, 3, 1, 2, 3]
+2 * [1, 2, 3]  # => sim.
+
+# note: shallow copies; replicated by reference
+
+x, y, z = [1, 2, 3]  # => x = 1, y = 2, z = 3
+
+# note: unpacking structure must match:
+a, b = ((1, 2, 3), (4, 5, 6))  # => a = (1,2,3), b = (4,5,6), OR
+(a, b, c), (d, e, f) = ((1, 2, 3), (4, 5, 6))  # => a=1,b=2,c=3,d=4,e=5,f=6
+# not: a, b, c, d, e, f = ((1,2,3), (4,5,6))
+
+# index / slice  : # l[i:j:stride]
+
+# membership
+"two" in t  # => True
+"two" not in t  # => False
+
+# note: strings also accept _sub-strings_ in addition to chars
+"he" in "hello"  # => True
+
+# iteration
+for word in l:
+    print(word)
+
+# all()
+# any()
+# len()
+# min()
+# max()
+# sum()
+
+
+# ## List Modification
+
+l = [1, 2, 3]
+l[1] = 42  # => [1, 42, 3]
+l[1:] = [99, 99]  # => [1, 99, 99]
+
+# sequence is expanded or reduced to accomodate all the elements in r
+l = [1, 2, 3]
+l[1:2] = [99] * 3  # => [1, 99, 99, 99, 3]
+
+l = [1, 2, 3]
+l[1:] = []  # => [1]
+
+# del
+l = [1, 2, 3]
+del l[1]  # => [1, 3]
+
+l = [1, 2, 3]
+del l[1:]  # => [1]
+
+# sequence comparison
+l1 = [1, 2, 3]
+l2 = [1, 2, 4]
+
+l1 < l2  # => True:  1 == 1, 2 == 2, 3 < 4
+
+l1 = [1, 2, 3]
+l2 = [1, 2, 3, 0]
+l1 < l2  # => True: 1 == 1, 2 == 2, 3 == 3, no index 3 in l1
+
+l1 = [1, 2, 4]
+l2 = [1, 2, 3, 0]
+l1 < l2  # => False: 1 == 1, 2 == 2, 4 > 3
+
+# #string comparison
+# - compared using lexicographical ordering
+# - each chars numerical index is determined by the character set
+# - characters ordered based on their index
+
+# ordered comparison of byte and unicode strings will raise exception:
+b'abc' < u'abc'  # => TypeError
+
+# >>> RESUME @ String Formatting <<<
