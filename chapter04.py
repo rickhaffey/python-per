@@ -151,4 +151,170 @@ l1 < l2  # => False: 1 == 1, 2 == 2, 4 > 3
 # ordered comparison of byte and unicode strings will raise exception:
 b'abc' < u'abc'  # => TypeError
 
-# >>> RESUME @ String Formatting <<<
+# ## String Formatting
+
+# - % formatting
+# - similar to sprintf (C)
+# - combines a format string and a tuple or map of objects
+
+template = """
+int: %d
+unsigned int: %u
+octal int: %o
+hex int: %x
+hex int (uppercase): %X
+float: %f
+float (sci. notation): %e
+float (SCI. NOTATION): %E
+float (sci for "large" exponents): %g
+float (SCI for "large" exponents): %G
+str(): %s
+repr(): %r
+char: %c
+literal %%: %%
+"""
+
+
+class Foo:
+    def __repr__(self):
+        return "Foo() # repr()"
+
+    def __str__(self):
+        return "Foo # str()"
+
+
+i = 42
+f_s = 1.234
+f_l = 1.234e10
+o = Foo()
+c = 120  # ord("x")
+values = (i, i, i, i, i, f_s, f_l, f_l, f_l, f_l, o, o, c)
+print(template % values)
+
+# >>> int: 42
+# >>> unsigned int: 42
+# >>> octal int: 52
+# >>> hex int: 2a
+# >>> hex int (uppercase): 2A
+# >>> float: 1.234000
+# >>> float (sci. notation): 1.234000e+10
+# >>> float (SCI. NOTATION): 1.234000E+10
+# >>> float (sci for "large" exponents): 1.234e+10
+# >>> float (SCI for "large" exponents): 1.234E+10
+# >>> str(): Foo # str()
+# >>> repr(): Foo() # repr()
+# >>> char: x
+# >>> literal %: %
+
+# format with mapping
+mapping = {
+    "foo": Foo(),
+    "bar": 1.234e10,
+    "bat": 42
+}
+
+template = """
+foo: %(foo)s
+foo2: %(foo)r
+bar: %(bar)E
+bat: %(bat)X
+"""
+
+print(template % mapping)
+
+# >>> foo: Foo # str()
+# >>> foo2: Foo() # repr()
+# >>> bar: 1.234000E+10
+# >>> bat: 2A
+
+# format alignments
+pos = 12.345
+neg = -1 * pos
+
+template = """
+right align (default): %(pos)40f
+left align: %(neg)-40f
+
+## include the sign:
+right align: %(pos)+40f
+left align: %(pos)-+40f
+right align: %(neg)+40f
+left align: %(neg)-+40f
+
+## include zero fill:
+right align: %(pos)040f
+left align: %(pos)-040f
+"""
+
+print(template % {"pos": pos, "neg": neg})
+
+# >>> right align (default):                                12.345000
+# >>> left align: -12.345000
+# >>>
+# >>> ## include the sign:
+# >>> right align:                               +12.345000
+# >>> left align: +12.345000
+# >>> right align:                               -12.345000
+# >>> left align: -12.345000
+# >>>
+# >>> ## include zero fill:
+# >>> right align: 000000000000000000000000000000012.345000
+# >>> left align: 12.345000
+
+# formatting precision
+f = 12.345
+s = "abcdefghij"
+i = 42
+template = """
+%%(f).1f: %(f).1f
+%%(f).2f: %(f).2f
+%%(f).3f: %(f).3f
+%%(f).4f: %(f).4f
+%%(f).5f: %(f).5f
+
+%%(s).3s: %(s).3s
+%%(s).4s: %(s).4s
+%%(s).5s: %(s).5s
+
+%%(i).1i: %(i).1i
+%%(i).2i: %(i).2i
+%%(i).3i: %(i).3i
+%%(i).4i: %(i).4i
+"""
+
+print(template % {"f": f, "s": s, "i": i})
+
+# >>> %(f).1f: 12.3
+# >>> %(f).2f: 12.35
+# >>> %(f).3f: 12.345
+# >>> %(f).4f: 12.3450
+# >>> %(f).5f: 12.34500
+# >>>
+# >>> %(s).3s: abc
+# >>> %(s).4s: abcd
+# >>> %(s).5s: abcde
+# >>>
+# >>> %(i).1i: 42
+# >>> %(i).2i: 42
+# >>> %(i).3i: 042
+# >>> %(i).4i: 0042
+
+# ## user `vars()` function with formatting to mimic string interpolation
+foo = 42
+bar = "BAR"
+bat = [1, 2, 3]
+
+template = """
+foo: %(foo)i
+bar: %(bar)s
+bat: %(bat)r
+"""
+
+print(template % vars())
+
+# >>> foo: 42
+# >>> bar: BAR
+# >>> bat: [1, 2, 3]
+
+# >>> RESUME @ <<<
+# ## advanced string formatting
