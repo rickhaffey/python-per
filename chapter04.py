@@ -316,5 +316,88 @@ print(template % vars())
 # >>> bar: BAR
 # >>> bat: [1, 2, 3]
 
-# >>> RESUME @ <<<
 # ## advanced string formatting
+
+# - "example {} {2} {foo}".format(...)
+
+# automatic field numbering
+template = """
+The first parameter is '{}'
+The second parameter is '{}'
+The third parameter is '{}'
+"""
+
+print(template.format(1, 2, 3))
+
+# >>> The first parameter is '1'
+# >>> The second parameter is '2'
+# >>> The third parameter is '3'
+
+# manual field specification
+template = """
+The third parameter is '{2}'
+The parameter named 'foo' is '{foo}'
+"""
+
+print(template.format(1, 2, 3, foo="bar"))
+
+# >>> The third parameter is '3'
+# >>> The parameter named 'foo' is 'bar'
+
+# note: use '{{' and '}}' to escape braces
+
+# indexing (numeric index)
+template = """
+foo[3] = {foo[3]}
+"""
+
+print(template.format(foo=[1, 2, 3, 4, 5]))
+
+# >>> foo[3] = 4
+
+# attribute referencing (string key)
+template = """
+foo['bar'] = {foo[bar]}
+"""
+
+print(template.format(foo={'bar': 42}))
+
+# >>> foo['bar'] = 42
+
+# indexing and attribute referencing via numeric position
+template = """
+0[foo] = {0[foo]}
+1[2] = {1[2]}
+"""
+
+print(template.format({"foo": "bar"}, [1, 2, 3, 4, 5]))
+
+# >>> 0[foo] = bar
+# >>> 1[2] = 3
+
+# format specifiers
+
+# - general format: [[fill]align][sign][#][0][width][,][.precision][type]
+
+# -- alignment & fill
+# -- <: left align (string default)
+# -- >: right align (numeric default)
+# -- ^: center
+# -- =: padding after sign, before digits (numeric only)
+
+value = "example"
+print("|{0:10}|".format(value))  # |example   | (string r-aligned dflt)
+print("|{0:10}|".format(42))  # |        42| (number l-alligned dflt)
+print("|{0:<20}|".format(value))  # |example             |
+print("|{0:>20}|".format(value))  # |             example|
+print("|{0:^20}|".format(value))  # |      example       |
+print("|{0:.^20}|".format(value))  # |......example.......|
+
+print("|{0:+10}|".format(1.234))  # |    +1.234|
+print("|{0:=+10}|".format(1.234))  # |+    1.234|
+print("|{0:0>+10}|".format(1.234))  # |0000+1.234| ??
+print("|{0:0=+10}|".format(1.234))  # |+00001.234|
+
+# >>> RESUME @ <<<
+# advanced string formatting: "sign" option for numerics
+# https://docs.python.org/3.1/library/string.html#format-specification-mini-language
