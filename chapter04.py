@@ -398,6 +398,86 @@ print("|{0:=+10}|".format(1.234))  # |+    1.234|
 print("|{0:0>+10}|".format(1.234))  # |0000+1.234| ??
 print("|{0:0=+10}|".format(1.234))  # |+00001.234|
 
-# >>> RESUME @ <<<
 # advanced string formatting: "sign" option for numerics
+pos = 123.45
+neg = -1 * pos
+
+# '+' - sign for pos and neg
+print("{0:+}".format(pos))
+print("{0:+}".format(neg))
+
+# >>> +123.45
+# >>> -123.45
+
+# '-' - sign for negative only (default)
+print("{0:-}".format(pos))
+print("{0:-}".format(neg))
+
+# >>> 123.45
+# >>> -123.45
+
+# ' ' - sign for negative, space for positive
+print("{0: }".format(pos))
+print("{0: }".format(neg))
+
+# >>>  123.45
+# >>> -123.45
+
+# '#' - binary, octal, and hex prefix
+value = 42
+print("{0:d}".format(value))
+
+# >>> 42
+
+# binary
+
+print("{0:b}".format(value))
+print("{0:#b}".format(value))
+
+# >>> 101010
+# >>> 0b101010
+
+# octal
+
+print("{0:o}".format(value))
+print("{0:#o}".format(value))
+
+# >>> 52
+# >>> 0o52
+
+# hex
+print("{0:x}".format(value))
+print("{0:#x}".format(value))
+print("{0:X}".format(value))
+print("{0:#X}".format(value))
+
+# >>> 2a
+# >>> 0x2a
+# >>> 2A
+# >>> 0X2A
+
+# ',' - thousands separator
+value = 1234567890
+print("{0:d}".format(value))
+print("{0:,d}".format(value))
+
+# >>> 1234567890
+# >>> 1,234,567,890
+
+# - use type 'n' (without ',') for locale aware separator
+# NOTE: this doesn't work on Mac OS
+# See https://stackoverflow.com/questions/14287051/german-number-separators-using-format-language-on-osx  # noqa
+# import locale
+# locale.setlocale(locale.LC_ALL, 'de_DE')
+# print("{0:n}".format(1234.567))
+
+# expected:
+# >>> 1.234,57
+# actual:
+# >>> 1234,57
+# (decimal point localization is correct, but thousands separator not working)
+
+# >>> RESUME @ <<<
 # https://docs.python.org/3.1/library/string.html#format-specification-mini-language
+# width specification
+# precision
