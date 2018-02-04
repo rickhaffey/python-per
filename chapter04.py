@@ -317,6 +317,7 @@ print(template % vars())
 # >>> bat: [1, 2, 3]
 
 # ## advanced string formatting
+# https://docs.python.org/3.1/library/string.html#format-specification-mini-language
 
 # - "example {} {2} {foo}".format(...)
 
@@ -398,6 +399,9 @@ print("|{0:=+10}|".format(1.234))  # |+    1.234|
 print("|{0:0>+10}|".format(1.234))  # |0000+1.234| ??
 print("|{0:0=+10}|".format(1.234))  # |+00001.234|
 
+# can also precede width with '0' to fill with 0's
+print("|{0:0=010}|".format(1.234))  # |000001.234|
+
 # advanced string formatting: "sign" option for numerics
 pos = 123.45
 neg = -1 * pos
@@ -477,7 +481,82 @@ print("{0:,d}".format(value))
 # >>> 1234,57
 # (decimal point localization is correct, but thousands separator not working)
 
-# >>> RESUME @ <<<
-# https://docs.python.org/3.1/library/string.html#format-specification-mini-language
-# width specification
 # precision
+# - for float (f, F) => how many digits to display after decimal point
+# - for general (g, G) => total digits to display before and after decimal
+# - for non-numbers => total number of characters
+# - not allowed for ints
+print("{0:.3f}".format(1.23456789))  # 1.235
+print("{0:.3g}".format(1.23456789))  # 1.23
+print("{0:.3s}".format("abcdefghi"))  # abc
+
+# percent
+print("{0:.2%}".format(0.25))  # 25.00%
+
+# types
+
+# ## String
+# - 's': string
+# - (none): sames as 's'
+# ## Integer
+# - 'b': binary
+# - 'c': character
+# - 'd': decimal
+# - 'o': octal
+# - 'x/X': hex
+# - 'n': same as 'd', but uses locale
+# - (none): same as 'd'
+# ## Float
+# -'e/E': exponent
+# -'f/F': fixed point (nan/NAN; inf/INF)
+# - 'g/G': general
+# - 'n': same as 'g', but with current locale
+# - '%': mult by 100, display as 'f', followed by '%'
+# - (none): sim. to 'g'
+
+# format specs supplied as fields
+# - only one level of nested fields
+value = 12.34
+print("|{0:{fill}^{width}}|".format(value, fill='x', width='20'))
+# >>> |xxxxxxx12.34xxxxxxxx|
+
+# str and repr
+
+
+class Foo:
+    def __str__(self):
+        return "*str(Foo)*"
+
+    def __repr__(self):
+        return "*repr(Foo)*"
+
+
+f = Foo()
+print("{0!s}".format(f))  # *str(Foo)*
+print("{0!r}".format(f))  # *repr(Foo)*
+
+# ## Operations on Dictionaries
+d = {"foo": 42, "bar": 99}
+d["foo"]  # => 42
+d["bar"] = 43
+del d["bar"]
+"foo" in d  # => True
+len(d)  # 1
+
+
+d[1, 2, 3] = "baz"
+d  # {'foo': 42, (1, 2, 3): 'baz'}
+
+# ## Operations on Sets
+s = set([1, 3, 5, 7, 11])
+t = set([1, 3, 6, 9, 12])
+s | t  # => {1, 3, 5, 6, 7, 9, 11, 12}
+s & t  # => {1, 3}
+s - t  # => {5, 7, 11}
+s ^ t  # => {5, 6, 7, 9, 11, 12}
+len(s)  # => 5
+max(s)  # => 11
+min(s)  # => 1
+
+# >>> RESUME @ <<<
+# Augmented Assignment
