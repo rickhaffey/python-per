@@ -558,5 +558,210 @@ len(s)  # => 5
 max(s)  # => 11
 min(s)  # => 1
 
-# >>> RESUME @ <<<
 # Augmented Assignment
+
+# +=
+# -=
+# *=
+# /=
+# //=
+# **=
+# %=
+# &=
+# |=
+# ^=
+# >>=
+# <<=
+
+# Attribute Operator (.)
+
+# chained:
+# Foo.bar.bat
+
+# applied to function results
+# Foo.bar(42).bat(99)
+
+# Function Call Operator
+
+# f(a, b, c)
+# - prior to call, all arguments are evaluated, left to right
+# - aka: applicative order evaluation
+
+
+def a():
+    print("a")
+    return "A"
+
+
+def b():
+    print("b")
+    return "B"
+
+
+def c():
+    print("c")
+    return "C"
+
+
+def foo(x, y, z):
+    print("foo called with {}, {}, {}".format(x, y, z))
+
+
+foo(a(), b(), c())
+
+# >>> a
+# >>> b
+# >>> c
+# >>> foo called with A, B, C
+
+# - partial evluation via `partial()`
+from functools import partial  # noqa
+f_part = partial(foo, a(), b())
+print("... other stuff ...")
+f_part(c())
+
+# >>> a
+# >>> b
+# >>> ... other stuff ...
+# >>> c
+# >>> foo called with A, B, C
+
+# Conversion Functions
+
+# - use typename as a function to convert between builtin types
+
+# int
+# float
+# complex
+
+# str
+# repr
+# format
+print(format(12, ".=10d"))  # >>> ........12
+
+
+# eval  # evaluate string and return object
+
+# tuple
+# list
+# set
+# dict
+# frozenset
+
+# chr  # convert int to character
+# ord  # convert single char to int value
+
+# hex
+# bin
+# oct
+
+# Boolean Expressions and Truth Values
+
+# or
+# and
+# not
+
+# True values:
+# - True
+# - 42
+# - "non-empty string"
+# - [1, 2, 3]
+# - (1, 2, 3)
+# - {'a': 1, 'b': 2, 'c': 3}
+
+# False values:
+# - False
+# - 0
+# - None
+# - ""
+# - []
+# - ()
+# - {}
+
+# - boolean expressions evaluated L-to-R
+# - short-circuit evaluation
+def a():
+    print("a")
+    return True
+
+
+def b():
+    print("b")
+    return False
+
+
+a() or b()
+# >>> a
+
+b() or a()
+# >>> b
+# >>> a
+
+a() and b()
+# >>> a
+# >>> b
+
+b() and a()
+# >>> b
+
+# Object Equality and Identity
+# - x == y
+
+# for lists and tuples, true if all contained elements are equal
+# for dicts, true if same keys, and values mapped to keys are equal
+# for sets, true if have the same elements
+
+# - x is y
+# tests whether two variables refer to the same object in memory
+
+
+class Foo:
+    def __init__(self, value):
+        self.value = value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+
+f1 = Foo(42)
+f2 = Foo(42)
+
+f1 == f2  # => True
+f1 is f2  # => False
+
+# Operator Precedence
+
+# lowest => highest precedence:
+# - lambda
+# - if – else
+# - or
+# - and
+# - not x
+# - in, not in, is, is not, <, <=, >, >=, !=, ==
+# - |
+# - ^
+# - &
+# - <<, >>
+# - +, -
+# - *, @, /, //, %
+# - +x, -x, ~x
+# - **
+# - await x
+# - x[index], x[index:index], x(arguments...), x.attribute
+# - (expressions...), [expressions...], {key: value...}, {expressions...}
+
+# Conditional Expressions
+x = 1
+y = 2
+
+if x < y:
+    z = "option 1"
+else:
+    z = "option 2"
+
+# can be shortened to
+z = "option 1" if x < y else "option 2"
+
+# particularly useful for list comprehensions
+[q if q % 2 == 0 else -1 for q in range(10)]
+# >>> [0, -1, 2, -1, 4, -1, 6, -1, 8, -1]
