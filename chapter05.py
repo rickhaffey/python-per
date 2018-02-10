@@ -323,4 +323,149 @@ finally_no_catch(0)
 # >>> ZeroDivisionError: division by zero
 
 
-# >>> RESUME @ Ch 5. - Built-in exceptions <<<
+# Built-in Exceptions
+
+# BaseException
+#  +-- SystemExit
+#  +-- KeyboardInterrupt
+#  +-- GeneratorExit
+#  +-- Exception
+#       +-- StopIteration
+#       +-- StopAsyncIteration
+#       +-- ArithmeticError
+#       |    +-- FloatingPointError
+#       |    +-- OverflowError
+#       |    +-- ZeroDivisionError
+#       +-- AssertionError
+#       +-- AttributeError
+#       +-- BufferError
+#       +-- EOFError
+#       +-- ImportError
+#       |    +-- ModuleNotFoundError
+#       +-- LookupError
+#       |    +-- IndexError
+#       |    +-- KeyError
+#       +-- MemoryError
+#       +-- NameError
+#       |    +-- UnboundLocalError
+#       +-- OSError
+#       |    +-- BlockingIOError
+#       |    +-- ChildProcessError
+#       |    +-- ConnectionError
+#       |    |    +-- BrokenPipeError
+#       |    |    +-- ConnectionAbortedError
+#       |    |    +-- ConnectionRefusedError
+#       |    |    +-- ConnectionResetError
+#       |    +-- FileExistsError
+#       |    +-- FileNotFoundError
+#       |    +-- InterruptedError
+#       |    +-- IsADirectoryError
+#       |    +-- NotADirectoryError
+#       |    +-- PermissionError
+#       |    +-- ProcessLookupError
+#       |    +-- TimeoutError
+#       +-- ReferenceError
+#       +-- RuntimeError
+#       |    +-- NotImplementedError
+#       |    +-- RecursionError
+#       +-- SyntaxError
+#       |    +-- IndentationError
+#       |         +-- TabError
+#       +-- SystemError
+#       +-- TypeError
+#       +-- ValueError
+#       |    +-- UnicodeError
+#       |         +-- UnicodeDecodeError
+#       |         +-- UnicodeEncodeError
+#       |         +-- UnicodeTranslateError
+#       +-- Warning
+#            +-- DeprecationWarning
+#            +-- PendingDeprecationWarning
+#            +-- RuntimeWarning
+#            +-- SyntaxWarning
+#            +-- UserWarning
+#            +-- FutureWarning
+#            +-- ImportWarning
+#            +-- UnicodeWarning
+#            +-- BytesWarning
+#            +-- ResourceWarning
+
+# `except` statements specifying exceptions higher in the hierarchy can
+#   be used to catch exceptions _under_ that node in the hierarchy:
+
+try:
+    1 / 0
+except ArithmeticError:
+    print("caught an ArithmeticError")
+
+# >>> caught an ArithmeticError
+
+# Defining New Exceptions
+
+
+class CustomException(Exception):
+    def __init__(self, id, message):
+        self.args = (id, message)  # note: need to set this for automatic printing of traceback details  # noqa
+
+
+try:
+    raise CustomException(42, "something went wrong!")
+except CustomException:
+    print("caught CustomException")
+
+# >>> caught CustomException
+
+raise CustomException(42, "something else went wrong...")
+
+# >>> ---------------------------------------------------------------------------
+# >>> CustomException                           Traceback (most recent call last)
+# >>> <ipython-input-3-9c0ae77ed819> in <module>()
+# >>> ----> 1 raise CustomException(42, "something else went wrong...")
+# >>>
+# >>> CustomException: (42, 'something else went wrong...')
+
+# note: can use inheritance to create a hierarchy of custom exceptions
+
+# Context Managers and the `with` Statement
+
+# `with`
+# - allows a series of statements to execute inside a runtime context that is
+#   controlled by an object serving as a context manager:
+with open("./foo", "r") as f:
+    lines = f.readlines()
+    # do something
+
+# at end of block, the file will be closed via the context manager
+
+
+class Foo:
+    def __enter__(self):
+        print("enter Foo")
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        print("exit Foo: {}, {}, {}".format(exc_type, exc_value, traceback))
+        return None  # falsy return value indicates any exceptions should be propagated  # noqa
+
+
+# without an exception
+with Foo() as f:
+    print("inside with block")
+
+# >>> enter Foo
+# >>> inside with block
+# >>> exit Foo: None, None, None
+
+# with an (uncaught) exception
+with Foo() as f:
+    print("inside with block")
+    raise Exception("uh-oh!")
+
+# >>> enter Foo
+# >>> inside with block
+# >>> exit Foo: <class 'Exception'>, uh-oh!, <traceback object at 0x1061a4488>
+
+# see https://docs.python.org/3/library/contextlib.html for utilities to help
+# in supporting context manager / `with` statement functionality
+
+# >>> RESUME @ Ch. 5 - Assertions and __DEBUG__
