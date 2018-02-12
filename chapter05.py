@@ -468,4 +468,20 @@ with Foo() as f:
 # see https://docs.python.org/3/library/contextlib.html for utilities to help
 # in supporting context manager / `with` statement functionality
 
-# >>> RESUME @ Ch. 5 - Assertions and __DEBUG__
+# Assertions and __debug__
+
+# - assert {test} [, msg]
+#  if {test} evaluates to False -> raises AssertionError
+assert True == False, "that was unexpected..."  # noqa
+
+# >>> AssertionError: that was unexpected...
+
+# asserts are not executed if Python is run in optimized mode (-O option)
+# intent of assertions is to check things that should always be true
+
+# built-in, read-only `__debug__` can be used to define code that is run only
+# when not running in optimized mode; it's only set to True when not running
+# optimized:
+if __debug__:
+    # test some invariant expectations here...
+    pass
