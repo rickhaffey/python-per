@@ -87,4 +87,178 @@ foo6(1, 2, 3, 4, 5, 6, 7)  # >>> 6 (2, 3, 4, 5, 6, 7)
 t = ('a', 'b', 'c', 'd')
 foo6(99, *t)  # >>> 4 ('a', 'b', 'c', 'd')
 
-# >>> RESUME @ Ch 6. Keyword Arguments
+# keyword arguments
+# - order (in call) doesn't matter
+# - must name all non-optional params
+# - if any required are omitted, or if names mismatch : TypeError
+
+
+def foo7(x, y, z):
+    print("you passed {}, {}, and {}".format(x, y, z))
+
+
+foo7(x=1, y=42, z="hello")  # >>> you passed 1, 42, and hello
+
+
+# can combine positional and named:
+# - positional must come first
+# - all non-optional args are provided
+# - none are provided more than 1x
+foo7("bar", "bat", z="baz")  # >>> you passed bar, bat, and baz
+
+
+# kwargs
+# - supported if last param named **{param_name}
+# - provided as a dictionary
+
+
+def foo8(x, y, **kwargs):
+    print("you passed: {}, {}, and {}".format(x, y, kwargs))
+
+
+foo8(42, 99, bar="bar", bat="bat", baz=100)
+# >>> you passed: 42, 99, and {'bar': 'bar', 'bat': 'bat', 'baz': 100}
+
+# *args + **kwargs
+
+
+def foo9(*args, **kwargs):
+    print("you passed: {} and {}".format(args, kwargs))
+
+
+foo9(1, 42, 99, x=1.23, y=0.5, z="hell")
+# >>> you passed: (1, 42, 99) and {'x': 1.23, 'z': 'hell', 'y': 0.5}
+
+# ## Parameter Passing and Return Values
+# - no simple pass-by-value or pass-by-reference
+# - depends on type of argument passed
+#   - immutable: similar to pass-by-value
+#   - mutable: similar to pass-by-reference
+
+
+def foo10(x):
+    x[1] = 42
+
+
+z = [1, 2, 3]
+print(z)
+foo10(z)
+print(z)
+
+# >>> [1, 2, 3]
+# >>> [1, 42, 3]
+
+# above is an example of a method with side effects
+# more functional approach would _not_ modify the original
+# and instead return a copy
+
+# values are returned via `return`
+# functions without a return yield `None`
+# can use tuples to return multiple values
+
+# ## Scoping Rules
+
+# - new local namespace created for function execution
+# - contains fx params and locals
+# - resolution searches (in order):
+#   - local
+#   - global (module in which function is defined)
+#   - built-in
+#   - not found => `NameError`
+
+# `global` keyword
+# - inside a function, variable references by default are to local vars
+# - variables named the same as globals will be treated as new local vars
+# - to instead refer to the global var, use the `global` keyword:
+g = 100
+
+
+def foo11():
+    g = 42
+    print("g inside fx: {}".format(g))
+
+
+print("g before fx: {}".format(g))
+foo11()
+print("g after fx: {}".format(g))
+
+# >>> g before fx: 100
+# >>> g inside fx: 42
+# >>> g after fx: 100
+
+
+# using `global` keyword
+g = 100
+
+
+def foo12():
+    global g
+    g = 42
+    print("g inside fx: {}".format(g))
+
+
+print("g before fx: {}".format(g))
+foo12()
+print("g after fx: {}".format(g))
+
+# >>> g before fx: 100
+# >>> g inside fx: 42
+# >>> g after fx: 42
+
+
+# nested function definitions
+# - lexical scoping: resolution works upward through nested levels
+# - use `nonlocal` keyword to modify a non-global variable from a higher
+# - only applies at 1 level -- does not apply to further nested variables
+#   containing scope:
+
+
+def foo13():
+    x = 99
+
+    def foo14():
+        x = 100
+        print("foo14(): {}".format(x))
+
+    print("foo13(): {}".format(x))
+    foo14()
+    print("foo13(): {}".format(x))
+
+
+foo13()
+# >>> foo13(): 99
+# >>> foo14(): 100
+# >>> foo13(): 99
+
+
+def foo15():
+    x = 99
+
+    def foo16():
+        nonlocal x
+        x = 100
+        print("foo16(): {}".format(x))
+
+    print("foo15(): {}".format(x))
+    foo16()
+    print("foo15(): {}".format(x))
+
+
+foo15()
+
+# >>> foo15(): 99
+# >>> foo16(): 100
+# >>> foo15(): 100
+
+# attempts to use a local variable before assignment: `UnboundLocalError`
+
+
+def foo17():
+    print(i)
+    i = 42
+
+
+foo17()
+# >>> UnboundLocalError: local variable 'i' referenced before assignment
+
+# >>> RESUME @ Functions as Objects and Closures
