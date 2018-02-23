@@ -261,4 +261,140 @@ def foo17():
 foo17()
 # >>> UnboundLocalError: local variable 'i' referenced before assignment
 
-# >>> RESUME @ Functions as Objects and Closures
+# ## Functions as Objects and Closures
+
+# closure - when the statements that make up a function are packaged with
+#           the environment in which they execute
+
+# - all functions have a `__globals__` attribute that points to the global
+#   namespace in which the function was defined (e.g. the enclosing module
+#   in which a function was defined
+
+# useful for delayed execution
+# - define a function that returns another function, that will be called
+#   at some later time, but use the context of the point of creation
+
+# it's possible to view the contents of the variables carried in a closure:
+
+
+def simple(x, y):
+    print("x: {}".format(x))
+    print("y: {}".format(y))
+
+
+def outer(param):
+    def inner():
+        simple(param, param ** 2)
+    return inner
+
+
+f = outer(2)
+
+f()
+# >>> x: 2
+# >>> y: 4
+
+print(f.__closure__[0].cell_contents) # >>> 2
+
+# ## Decorators
+# - function that wraps another function or class
+# - purpose is to alter or enhance behavior of the wrapped object
+# - denoted using '@'
+
+
+def log_before_after(func):
+    def callf(*args, **kwargs):
+        print("before")
+        r = func(*args, **kwargs)
+        print("after")
+        return r
+
+    return callf
+
+
+@log_before_after
+def decorator_demo(x):
+    print("you passed in '{}'".format(x))
+
+
+decorator_demo(42)
+
+# >>> before
+# >>> you passed in '42'
+# >>> after
+
+# note - this is shorthand syntax for the equivalent:
+#
+#    def decorator_demo(x):
+#        print("you passed in '{}'".format(x))
+#    decorator_demo = log_before_after(decorator_demo)
+
+# more than one decorator can be applied to a function, and will be "evaluated"
+# in the order applied
+
+# decorators can accept arguments
+
+
+def log_prefix(prefix):
+    def log_before_after(func):
+        def callf(*args, **kwargs):
+            print(prefix + " " + "before")
+            r = func(*args, **kwargs)
+            print(prefix + " " + "after")
+            return r
+
+        return callf
+
+    return log_before_after
+
+
+@log_prefix("HI!")
+def decorator_demo2(x):
+    print("you passed in '{}'".format(x))
+
+
+decorator_demo2(99)
+
+# >>> HI! before
+# >>> you passed in '99'
+# >>> HI! after
+
+# equivalent to:
+#
+# def decorator_demo2(x):
+# ...
+# temp = log_prefix("HI!")
+# decorator_demo2 = temp(decorator_demo2)
+
+# decorators can be applied to class definitions
+
+
+def addId(original_class):
+    # capture the original init
+    orig_init = original_class.__init__
+
+    def __init__(self, id, *args, **kwargs):
+        self.__id = id
+        self.get_id = lambda: self.__id
+
+        # call the original
+        orig_init(self, *args, **kwargs)
+
+    # re-assign init on the decorated class
+    # to our new version
+    original_class.__init__ = __init__
+    return original_class
+
+
+@addId
+class Decoratee:
+    def __init__(self):
+        print("inside init...")
+        print("id is :{}".format(self.get_id()))
+
+
+d = Decoratee(123)
+# >>> inside init...
+# >>> id is :123
+
+## >>> RESUME @ GENERATORS and `yield` <<<
