@@ -397,4 +397,93 @@ d = Decoratee(123)
 # >>> inside init...
 # >>> id is :123
 
-## >>> RESUME @ GENERATORS and `yield` <<<
+# ## Generators and `yield`
+# - a function using `yield` produces a generator
+# - a generator is a function producing a sequence of values for use
+#    in iteration
+
+
+def count_by(increment=1, start=0, stop=50):
+    x = start
+    while x <= stop:
+        yield x
+        x += increment
+
+
+c = count_by(5)
+c.__next__()
+# >>> 0
+
+c.__next__()
+# >>> 5
+
+c.__next__()
+# >>> 10
+
+[c for c in count_by(5)]
+# >>> [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+
+# call to `__next__` executes up to the `yield` statement, producing the next
+# result
+
+# subsequent calls to `__next__` resume execution at the point _after_ `yield`
+
+# the generator signals completion by raising a `StopIteration` exception
+
+# a shutdown can be signaled before generator is complete via
+# the `close` method:
+
+c = count_by(3)
+print(c.__next__())
+print(c.__next__())
+c.close()
+print(c.__next__())
+
+# >>> 0
+# >>> 3
+# >>> ---------------------------------------------------------------------------  # noqa
+# >>> StopIteration                             Traceback (most recent call last)  # noqa
+# >>> <ipython-input-35-88bd522ad2be> in <module>()
+# >>>       3 print(c.__next__())
+# >>>       4 c.close()
+# >>> ----> 5 print(c.__next__())
+# >>>
+# >>> StopIteration:
+
+# inside generator, `close` is signaled via a `GeneratorExit` exception:
+
+
+def count(start):
+    x = start
+    while True:
+        try:
+            yield x
+            x += 1
+        except GeneratorExit:
+            print("catching a GeneratorExit")
+
+
+c = count(3)
+print(c.__next__())
+print(c.__next__())
+c.close()
+print(c.__next__())
+
+# >>> 3
+# >>> 4
+# >>> catching a GeneratorExit
+# >>> --------------------------------------------------------------------------- # noqa
+# >>> RuntimeError                              Traceback (most recent call last) # noqa
+# >>> <ipython-input-37-bcfe83be3ee2> in <module>()
+# >>>       2 print(c.__next__())
+# >>>       3 print(c.__next__())
+# >>> ----> 4 c.close()
+# >>>       5 print(c.__next__())
+# >>>
+# >>> RuntimeError: generator ignored GeneratorExit
+
+# Note: ignoring the GeneratorExit and continuing to yield values after a
+# call to `close` is a violation of the generator protocol, as noted by
+# the RuntimeError and corresponding message indicated above.
+
+# >>> RESUME @ Coroutines and `yield` Expressions <<<
