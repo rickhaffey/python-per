@@ -486,4 +486,139 @@ print(c.__next__())
 # call to `close` is a violation of the generator protocol, as noted by
 # the RuntimeError and corresponding message indicated above.
 
-# >>> RESUME @ Coroutines and `yield` Expressions <<<
+# ## Coroutines and `yield` Expressions
+
+# a coroutine is defined when a `yield` expression is used on the
+# right-hand side of an assignment
+# - the function will execute in response to values being sent to it
+# - a call to `__next__` must be made before the first send
+
+
+def receiver():
+    while True:
+        n = yield
+        print("you sent {}".format(n))
+
+
+r = receiver()
+r.__next__()
+r.send(42)
+# >>> you sent 42
+r.send(99)
+# >>> you sent 99
+
+
+# a suggested pattern for automatically calling `__next__` before the
+# first call to send is to define a `coroutine` decorator:
+
+def coroutine(func):
+    def start(*args, **kwargs):
+        g = func(*args, **kwargs)
+        g.__next__()
+        return g
+    return start
+
+
+@coroutine
+def receiver2():
+    while True:
+        n = yield
+        print("you sent {}".format(n))
+
+
+r = receiver2()
+r.send(1)    # >>> you sent 1
+r.send(10)   # >>> you sent 10
+r.send(100)  # >>> you sent 100
+
+# coroutine can be shutdown with a call to `close`:
+
+r.close()
+r.send(1000)
+# >>> ---------------------------------------------------------------------------  # noqa
+# >>> StopIteration                             Traceback (most recent call last)  # noqa
+# >>> <ipython-input-10-6d2588644d52> in <module>()
+# >>>       1 r.close()
+# >>> ----> 2 r.send(1000)
+# >>>
+# >>> StopIteration:
+
+# a "sender" can raise exceptions within the coroutine via the
+# `throw` statement
+
+r = receiver2()
+r.send(99)
+r.throw(RuntimeError("uh oh"))
+
+# >>> you sent 99
+# >>> ---------------------------------------------------------------------------  # noqa
+# >>> RuntimeError                              Traceback (most recent call last)  # noqa
+# >>> <ipython-input-11-668294cff04a> in <module>()
+# >>>       1 r = receiver2()
+# >>>       2 r.send(99)
+# >>> ----> 3 r.throw(RuntimeError("uh oh"))
+# >>>
+# >>> <ipython-input-9-62c0f2c653dc> in receiver2()
+# >>>      10 def receiver2():
+# >>>      11     while True:
+# >>> ---> 12         n = yield
+# >>>      13         print("you sent {}".format(n))
+# >>>      14
+# >>>
+# >>> RuntimeError: uh oh
+
+
+# coroutine can both receive _and_ emit:
+
+@coroutine
+def receive_and_double():
+    result = 0
+    while True:
+        value = (yield result)
+        result = 2 * value
+
+
+d = receive_and_double()
+d.send(5)   # >>> 10
+d.send(44)  # >>> 88
+
+
+# ## Using Generators and Coroutines
+# - generators can be useful for defining processing pipelines
+#   - can be memory efficient, in that items are loaded and processed one-by-one
+#       rather than loading full collection into memory prior to first
+#       transofmration
+# - coroutines can be used to build what look like inverted pipelines
+#   - values are sent through a collection of linked coroutines
+
+# ## List Comprehensions
+# general syntax:
+
+# [expression for item1 in iterable1 if condition1
+#             for item2 in iterable2 if condition2
+#             ...
+#             for itemN in iterableN if conditionN]
+
+# this is similar to
+# s = []
+# for item1 in iterable1:
+#     if condition1:
+#         for item2 in iterable2:
+#             if condition2:
+#                 ....
+#                 for itemN in iterableN:
+#                     if conditionN:
+#                         s.append(expression)
+
+# in python3, the itemN variables noted above is private to the iteration:
+[q for q in [1, 2, 3]]
+print(q)
+# >>> [1, 2, 3]
+# >>> ---------------------------------------------------------------------------  # noqa
+# >>> NameError                                 Traceback (most recent call last)  # noqa
+# >>> <ipython-input-23-9a2128501b7d> in <module>()
+# >>> ----> 1 print(q)
+# >>>
+# >>> NameError: name 'q' is not defined
+
+# >>> RESUME @ Generator Expressions <<<
