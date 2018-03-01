@@ -621,4 +621,145 @@ print(q)
 # >>>
 # >>> NameError: name 'q' is not defined
 
-# >>> RESUME @ Generator Expressions <<<
+# ## Generator Expressions
+
+# - object similar to list comprehension, but produces result iteratively
+# - can improve performance and memory usage over building full list at once
+#   as would happen with list comprehension
+# - evaluates to a `generator`; does not support indexing or general list
+#   methods
+# - can be converted to a list using `list()`
+
+
+g = (x for x in range(10))
+g.__next__()  # >>> 0
+g.__next__()  # >>> 1
+
+
+# ## Declarative Programming
+
+# - use of comprehensions leads to syntax similar to mathematical set notation
+# - compact representation
+# - focus is less on mechanics of iteration, and more on the actual
+#   transformation
+
+# ## Lambda Operator
+
+# - create anonymous functions using `lambda`
+#   `lambda {args}: {expression}`
+#    - {args}: comma separated list of arguments
+#    - {expression}: expression involving those arguments
+#   - expression must be valid expression, not mult. statements
+#       or non-expression; follow same scoping rules as functions
+
+
+def do_work(f, *args, **kwargs):
+    print("doing work")
+    result = f(*args, **kwargs)
+    print("done")
+    return result
+
+
+do_work(lambda x: x * x, 3)
+# >>> doing work
+# >>> done
+# >>> 9
+
+# ## Recursive Functions
+
+# - limit to the depth of recursive function calls
+import sys  # noqa
+
+sys.getrecursionlimit()
+# >>> 1000
+
+# - can be changed with the following (limited by system specific stack size
+#   limit)
+# - python doesn't provide tail-recursion optimization
+n = 2000
+sys.setrecursionlimit(n)
+
+
+# - recursion doesn't work in generators or coroutines
+# - decorators applied to recursive functions will route all recursive
+#   calls through the decorator
+
+
+def rec_dec(f):
+    def do_it(*args, **kwargs):
+        print("in decorator")
+        return f(*args, **kwargs)
+
+    return do_it
+
+
+@rec_dec
+def factorial(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+
+factorial(5)
+# >>> in decorator
+# >>> in decorator
+# >>> in decorator
+# >>> in decorator
+# >>> in decorator
+# >>> 120
+
+# ## Documentation Strings
+
+# - common for first statement of a function to be a documentation string
+#   describing usage
+# - stored in the `__doc__` attribute of the function
+# - note that this can be "hidden" when wrapped via a decorator;
+#   decorator can be written to propagate the __doc__ string and function name:
+
+
+def deco_doc(f):
+    def inner(*args, **kwargs):
+        return f(*args, **kwargs)
+
+    inner.__doc__ = f.__doc__
+    inner.__name__ = f.__name__
+    return inner
+
+
+# OR - can use support for this provided by `functools`:
+from functools import wraps  # noqa
+
+
+def deco_doc2(f):
+    @wraps(f)
+    def inner(*args, **kwargs):
+        return f(*args, **kwargs)
+
+    return inner
+
+
+# ## Function Attributes
+
+# - can attach arbitrary attributes to functions
+
+def attr_demo():
+    print("hello")
+
+
+attr_demo.foo = "foo"
+attr_demo.bar = 42
+# >>> attr_demo.__dict__
+# >>> {'bar': 42, 'foo': 'foo'}
+
+# >>> attr_demo.foo
+# >>> 'foo'
+
+# >>> attr_demo.bar
+# >>> 42
+
+# - attributes face the same concerns when wrapped by decorators as doc string
+# - use functools.wraps to support propagating attributes to the decorated
+#   version
+
+# >>> RESUMSE @ `eval`, `exec`, and `compile` <<<
