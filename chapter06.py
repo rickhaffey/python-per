@@ -762,4 +762,43 @@ attr_demo.bar = 42
 # - use functools.wraps to support propagating attributes to the decorated
 #   version
 
-# >>> RESUMSE @ `eval`, `exec`, and `compile` <<<
+# ## `eval`, `exec`, and `compile`
+
+# - `eval` evaluates an expression string and returns result
+# - `exec` executes a block of code, and returns None
+
+expression = "12345"
+eval(expression)  # >>> 12345
+exec(expression)  # >>> (none)
+
+block = """
+x = 0
+while(x < 3):
+    print(x)
+    x += 1
+"""
+eval(block)  # >>> SyntaxError: invalid syntax
+exec(block)
+# >>> 0
+# >>> 1
+# >>> 2
+
+# - both execute within namespace of the caller, but optionally accept
+#   mappings to provide the global and local namespaces to use for
+#   symbol resolution
+
+# - both eval and exec compile string into bytecode before evaluating /
+#   executing
+# - for performance optimization, this compile step can be carried out
+#   first, and the result re-used for multiple eval / exec calls:
+
+ce = compile(expression, '', 'eval')
+# >>> <code object <module> at 0x105aad030, file "", line 1>
+cb = compile(block, '', 'exec')
+# >>> <code object <module> at 0x105a5ef60, file "", line 2>
+
+eval(ce)  # >>> 12345
+exec(cb)
+# >>> 0
+# >>> 1
+# >>> 2
