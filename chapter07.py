@@ -175,5 +175,105 @@ d2.say_hi()
 # >>> hello from derived v2
 # >>> hello from base
 
+# ## multiple inheritance
 
-# >>> RESUME @ multiple inheritance <<<
+# - specified by providing comma separated list of multiple base classes
+
+
+class Root1:
+    def run1(self):
+        print("hello from root 1")
+
+    def shared(self):
+        print("shared method - root 1")
+
+
+class Root2():
+    def run2(self):
+        print("hello from root 2")
+
+    def shared(self):
+        print("shared method - root 2")
+
+
+class Child1(Root1, Root2):
+    pass
+
+
+c1 = Child1()
+c1.run1()
+c1.run2()
+c1.shared()
+
+# >>> hello from root 1
+# >>> hello from root 2
+# >>> shared method - root 1
+
+# if the order of based classes were reversed above (i.e. Root2, Root1),
+# the call to `shared` would have run the version defined in Root2
+
+# this is based on the method resolution order
+# to see the order in which methods are resolved, see `.mro`:
+Child1.mro()
+
+# >>> [__main__.Child1, __main__.Root2, __main__.Root1, object]
+
+# ## Polymorphism, Dynamic Binding, and Duck Typing
+
+# dynamic binding - the capability to use an instance without regards to its
+#    type
+
+# looking up an attribute will work on any object that _has_ that attribute
+# this is known as "duck typing": if it looks like, quacks like, and walks
+#   like a duck, then it's a duck
+
+# customized versions of objects can be made by creating a new object
+# that supports all the attributes and methods of the source object
+
+# ## Static Methods and Class Methods
+
+# static method - a function that lives in the namespace dfined by a class
+#   defined using the `@staticmethod` decorator
+#   called against the class itself:  MyClass.dosomething()
+
+# class method - operators on the class itself, as an object
+#   defined using the `@classmethod` decorator
+#   when called, the class is passed as the first argument (rather than `self`)
+
+
+class Root2():
+    def display(self):
+        print("hello from root2")
+
+    @staticmethod
+    def get_v1():
+        return Root2()
+
+    @classmethod
+    def get_v2(cls):
+        return cls()
+
+
+class Child2(Root2):
+    def display(self):
+        print("hello from child2")
+
+
+Root2.get_v1().display()
+Root2.get_v2().display()
+Child2.get_v1().display()
+Child2.get_v2().display()
+
+# >>> hello from root2
+# >>> hello from root2
+# >>> hello from root2
+# >>> hello from child2
+
+# note that static and class methods can also be called on instances of
+# the classes they're defined on:
+
+c2 = Child2()
+c2.get_v1().display()
+# >>> hello from root2
+
+# >>> RESUME @ Properties <<<
