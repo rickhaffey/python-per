@@ -276,4 +276,91 @@ c2 = Child2()
 c2.get_v1().display()
 # >>> hello from root2
 
-# >>> RESUME @ Properties <<<
+# # Properties
+
+# - special kind of attribute that computes its value when accessed
+# - `@property` keyword allows access without need for trailing `()`
+
+
+class SpecialNumber:
+    def __init__(self, value):
+        self.value = value
+
+    @property
+    def double(self):
+        return self.value * 2
+
+    def display_with(self, x):
+        print("{}, {}".format(self.value, x))
+
+
+n = SpecialNumber(42)
+print("n.value: {}".format(n.value))
+print("n.double: {}".format(n.double))
+
+# >>> n.value: 42
+# >>> n.double: 84
+
+# - attribute also prevents re-assigning the value
+n.double = 66
+
+# >>> -------------------------------------------------------------------------
+# >>> AttributeError                          Traceback (most recent call last)
+# >>> <ipython-input-6-d0c9ae2c46f8> in <module>()
+# >>> ----> 1 n.double = 66
+# >>>
+# >>> AttributeError: can't set attribute
+
+# - accessing a non-attributed method using similar syntax returns
+#   a bound method:
+#   - an object representing the function call to execute via `()`
+#   - sim. to a partially evaluated function with the `self` param evaluated
+#   -  additional args supplied with `()`
+#   - created automatically via an internal property function
+# - `@staticmethod` and `@classmethod` indicate the use of _different_
+#   property functions
+#   - e.g. `@staticmethod` indicates to return the method back "as-is"
+
+n.display_with
+
+# >>> <bound method SpecialNumber.display_with of <__main__.SpecialNumber object at 0x109856b38>>  # noqa
+
+# ## property setters and deleters
+
+
+class SimpleValue:
+    def __init__(self, value):
+        self.__value = value
+
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, new_value):
+        print("setting value to {}".format(new_value))
+        self.__value = new_value
+
+    @value.deleter
+    def value(self):
+        # simulate deletion
+        print("deleting value")
+        self.__value = "DELETED"
+
+
+s = SimpleValue("hello")
+print("s.value: {}".format(s.value))
+
+s.value = "goodbye"
+print("s.value: {}".format(s.value))
+
+del s.value
+print("s.value: {}".format(s.value))
+
+# >>> s.value: hello
+# >>> setting value to goodbye
+# >>> s.value: goodbye
+# >>> deleting value
+# >>> s.value: DELETED
+
+# RESUME @ descriptors
