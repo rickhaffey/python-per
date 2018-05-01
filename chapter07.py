@@ -363,4 +363,45 @@ print("s.value: {}".format(s.value))
 # >>> deleting value
 # >>> s.value: DELETED
 
-# RESUME @ descriptors
+# ## descriptors
+
+# - a further generalization of support for properties / attribute access on a class
+# - simply an object that represents the value of an attribute
+#   - can customize behavior of getters / setters by implementing special methods:
+#   - `__get__()`
+#   - `__set__()`
+#   - `__delete__()`
+
+class DescriptorProperty(object):
+    def __init__(self, name, value):
+        self.name = "_" + name
+        self.default = value
+        print("in __init__")
+
+    def __get__(self, instance, cls):
+        print("in __get__")
+        return getattr(instance, self.name, self.default)
+
+    def __set__(self, instance, value):
+        print("in __set__")
+        setattr(instance, self.name, value)
+
+    def __delete__(self, instance):
+        print("in __delete__")
+
+
+class Foo(object):
+    p1 = DescriptorProperty("p1", "hi")
+    p2 = DescriptorProperty("p2", "bye")
+
+
+f = Foo()
+    
+f.p1
+
+# >>> in __get__
+# >>> "hi"
+
+f.p1 = "hello"
+
+# >>> in __set__
