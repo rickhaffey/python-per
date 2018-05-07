@@ -88,7 +88,8 @@ d2.say_hi()
 #   - if not found, works its way up through parents until found
 
 # - when derived class defines `__init__`, the `__init__` method on base class
-#   is not automatically invoked; derived class must call the method explicitly:
+#   is not automatically invoked; derived class must call the method
+#   explicitly:
 
 
 class DemoBaseInit():
@@ -363,14 +364,39 @@ print("s.value: {}".format(s.value))
 # >>> deleting value
 # >>> s.value: DELETED
 
-# ## descriptors
+# ## Descriptors
+#  https://docs.python.org/3/howto/descriptor.html
 
-# - a further generalization of support for properties / attribute access on a class
+# - a further generalization of support for properties / attribute access on a
+#   class
 # - simply an object that represents the value of an attribute
-#   - can customize behavior of getters / setters by implementing special methods:
-#   - `__get__()`
-#   - `__set__()`
-#   - `__delete__()`
+#   - can customize behavior of getters / setters by implementing special
+#     methods:
+#   - `descr.__get__(self, obj, type=None) --> value`
+#   - `descr.__set__(self, obj, value) --> None`
+#   - `descr.__delete__(self, obj) --> None`
+#   define any of these methods, and an object is considered a descriptor
+
+# with get+set, object is a data descriptor
+#    if set raises exception, it's a read-only data descriptor
+# with get but no set, object is a non-data descriptor
+
+# methods can be called:
+# - directly: `d.__get__(obj)`, or
+# - more common, indirectly: `obj.d` ; behind the scenes, this is a call
+#    to `type(obj).__dict__['d'].__get__(obj, type(obj))`
+
+# important notes
+# - descriptors are invoked by the `__getattribute__()` method
+# - overriding `__getattribute__()` prevents automatic descriptor calls
+# - `object.__getattribute__()` and `type.__getattribute__()`
+#    make different calls to `__get__()`
+# - data descriptors always override instance dictionaries.
+# - non-data descriptors may be overridden by instance dictionaries.
+
+# the `property` decorator is essentially creating descriptors for the
+# decorated attributes
+
 
 class DescriptorProperty(object):
     def __init__(self, name, value):
@@ -396,7 +422,7 @@ class Foo(object):
 
 
 f = Foo()
-    
+
 f.p1
 
 # >>> in __get__
@@ -405,3 +431,46 @@ f.p1
 f.p1 = "hello"
 
 # >>> in __set__
+
+# ## Data Encapsulation and Private Attributes
+
+# - by default, all attributes and methods of a class are public
+# - all names in a class that start with a double underscore
+#   are automatically mangled to form a new name:
+#   - `_{className}__{attributeName}`
+
+
+class PrivateMethods:
+    def __init__(self):
+        self.value = 42
+
+    def __foo(self):
+        print("Foo: {0:d}".format(self.value))
+
+    def bar(self):
+        print("Bar: {0:d}".format(self.value))
+
+
+p = PrivateMethods()
+p.bar()
+# >>> Bar: 42
+
+p.__foo()
+# >>> ---------------------------------------------------------------------------  # noqa
+# >>> AttributeError                            Traceback (most recent call last)  # noqa
+# >>> <ipython-input-2-36635920d6ac> in <module>()
+# >>> ----> 1 p.__foo()
+# >>>
+# >>> AttributeError: 'PrivateMethods' object has no attribute '__foo'
+
+# note that this is just an "illusion" of data hiding; the attribute can be
+# accessed using the mangled name:
+
+p._PrivateMethods__foo()
+# >>> Foo: 42
+
+
+# see the `SimpleValue` example above as a good example of using private
+# values in combination with properties to support encapsulation
+
+# RESUME @ >> Object Memory Management <<

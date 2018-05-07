@@ -1,0 +1,2 @@
+[flake8]
+exclude = chapter01.py,chapter02.py,chapter03.py,chapter04.py,chapter05.py,chapter06.py
