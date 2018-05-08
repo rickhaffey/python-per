@@ -473,4 +473,92 @@ p._PrivateMethods__foo()
 # see the `SimpleValue` example above as a good example of using private
 # values in combination with properties to support encapsulation
 
-# RESUME @ >> Object Memory Management <<
+# Object Memory Management
+
+# object instantiation
+# - call to `__new__()` => creates new instance
+#   - rarely defined by user code
+#   - class method
+#   - if defined in a class, usually means either,
+#     - the class is inheriting from an immutable base class
+#     - the class is defining a metaclass
+# - call to `__init__()` => initializes instance
+
+class NewExample:
+    @classmethod
+    def __new__(cls, *args, **kwargs):
+        print("in def...")
+        return super(NewExample, cls).__new__(cls)
+
+    def __init__(self):
+        print("in init...")
+
+
+ne = NewExample()
+# >>> in def...
+# >>> in init...
+
+# is the same as
+
+ne2 = NewExample.__new__(NewExample)
+if(isinstance(ne2, NewExample)):
+    NewExample.__init__(ne2)
+# >>> in def...
+# >>> in init...
+
+# - instances are managed by reference counting
+# - when about to be destroyed, the interpreter looks for
+#   a `__del__()` method, and calls it
+# - note that the `del` method doesn't directly
+#   call `__del__()`
+# - risky to rely on `__del__()` for a clean shutdown;
+#   consider having app explicitly call a method intended
+#   for shutdown
+# - reference cycles can lead to memory leaks
+#   - this can sometimes be solved by using `weakref`
+
+
+class DelExample:
+    def __del__(self):
+        print("in __del__()")
+
+
+def f_del():
+    d = DelExample()  # noqa
+    # ref count should go to 0 here
+
+
+f_del()
+# >>> in __del__()
+
+
+# weakref example
+import weakref  # noqa
+
+
+class WeakRefExample:
+    def __init__(self, foo):
+        self.foo = weakref.ref(foo)
+
+    def display(self):
+        foo = self.foo()  # <- notice fx call syntax
+        if foo:
+            foo.print_details()
+        else:
+            print("foo: NA")
+
+
+def f_wr():
+    foo = Foo(1, 2)
+    wr = WeakRefExample(foo)
+    wr.display()
+    return wr
+
+
+wr = f_wr()
+wr.display()
+
+# >>> Foo: (bar-1, baz-2)
+# >>> foo: NA
+
+# >> RESUME @ Object Representation and Attribute Binding <<
