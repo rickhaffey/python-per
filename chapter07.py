@@ -561,4 +561,79 @@ wr.display()
 # >>> Foo: (bar-1, baz-2)
 # >>> foo: NA
 
-# >> RESUME @ Object Representation and Attribute Binding <<
+# Object Representation and Attribute Binding
+
+# ## `__dict__`
+# - instances represented internally as a dictionary : `__dict__`
+
+
+class DictDemo:
+    def __init__(self, value1, **kw):
+        self.value1 = value1
+
+
+dd = DictDemo(42)
+print(dd.__dict__)
+# >>> {'value1': 42}
+
+# add another value using prop syntax, it's reflected in dict
+dd.value2 = "hello"
+print(dd.__dict__)
+# >>> {'value1': 42, 'value2': 'hello'}
+
+# or using the dict directly
+dd.__dict__['value3'] = 3
+print(dd.__dict__)
+# >>> {'value1': 42, 'value2': 'hello', 'value3': 3}
+
+# ## `__class__`
+# instances linked back to their class via `__class__`
+print(dd.__class__)
+# >>> <class '__main__.DictDemo'>
+
+# this class also has a __dict__ attribute containing attributes
+# of the class, including methods, etc.
+print(dd.__class__.__dict__)
+# >>> {'__module__': '__main__', '__init__': <function DictDemo.__init__ at 0x107dc9598>,  # noqa
+# >>> '__dict__': <attribute '__dict__' of 'DictDemo' objects>,
+# >>> '__weakref__': <attribute '__weakref__' of 'DictDemo' objects>, '__doc__': None}     # noqa
+
+
+# ## `__bases__`
+# a class has a special attribute (__bases__) linking it to its
+# base classes
+# - tuple of the base classes
+
+
+class OtherDemo:
+    def __init__(self, foo, bar, **kw):
+        self.foo = foo
+        self.bar = bar
+
+
+class BasesDemo(DictDemo, OtherDemo):
+    def __init__(self, value1, foo, bar):
+        super(BasesDemo, self).__init__(value1=value1, foo=foo, bar=bar)
+
+
+bd = BasesDemo(42, "FOO", "bar")
+print(bd.__class__.__bases__)
+# >>> (<class '__main__.DictDemo'>, <class '__main__.OtherDemo'>)
+
+# ## setters and getters
+# - `obj.name = value` invokes `obj.__setattr__("name", value)`
+#    - default handling is to modify that value in dict
+#    - if "name" refers to a descriptor, invokes set method of descriptor
+# - `del obj.name` invokes `obj.__delattr__("name")`
+#    - default handling to delete value from dict
+#    - if "name" refers to a descriptor, invokes delete method of descriptor
+# - retrieval of `obj.name` invokes `obj.__getattr__("name")`
+#    - search path:
+#    - properties,
+#    - local __dict__,
+#    - class __dict__,
+#    - searching the base classes
+#    - __getattr__ method of the class (if defined)
+#    - AttributeError
+
+# - a class can re-implement __getattr__, __setattr__, and __delattr__
