@@ -637,3 +637,114 @@ print(bd.__class__.__bases__)
 #    - AttributeError
 
 # - a class can re-implement __getattr__, __setattr__, and __delattr__
+#   - they should usually rely on the behavior implemented in `object`
+#     to carry out the actual work
+
+# ## __slots__
+# - the `__slots__` attribute is used to restrict set of legal instance
+#   attribute names
+# - performance mechanism; improves memory use and execution time
+#   over classes that use dict to store attributes
+# - that said, it can cause issues with inheritance, leading to
+#   worse performance if base class(es) don't _also_ define a
+#   `__slots__` values
+
+
+class SlotsDemo:
+    __slots__ = ("one", "two")
+
+
+s = SlotsDemo()
+s.one = 1
+s.two = 2
+s.three = 3
+# >>> ---------------------------------------------------------------------------
+# >>> AttributeError                            Traceback (most recent call last)
+# >>> <ipython-input-2-0f2b14b29514> in <module>()
+# >>> ----> 1 s.three = 3
+# >>> 
+# >>> AttributeError: 'SlotsDemo' object has no attribute 'three'
+
+s.__dict__
+# >>> ---------------------------------------------------------------------------
+# >>> AttributeError                            Traceback (most recent call last)
+# >>> <ipython-input-3-eb17e9874e77> in <module>()
+# >>> ----> 1 s.__dict__
+# >>> 
+# >>> AttributeError: 'SlotsDemo' object has no attribute '__dict__'
+
+# ## Operator Overloading
+# user defined classes can overload standard math operators, etc via operator
+# overloading
+# - `__add__`
+# - `__sub__`
+
+
+class OpOverloadDemo:
+    def __init__(self, value):
+        self.value = value
+
+    def __add__(self, other):
+        return OpOverloadDemo(self.value + other.value)
+
+    def __sub__(self, other):
+        return OpOverloadDemo(self.value - other.value)
+
+    def __str__(self):
+        return "value: {}".format(self.value)
+
+
+v1 = OpOverloadDemo(1)
+v2 = OpOverloadDemo(2)
+vresult = v1 + v2
+print(vresult)
+# >>> value: 3
+
+# robust support for operators requires handling type coercion for
+# mismatched lhs and rhs types, etc.
+
+# ## Types and Class Membership Tests
+
+# - `isinstance(obj, cname)`
+#   returns True if `obj` is an instance of `cname` or of a type
+#   derived from `cname`
+# - `issubclass(A, B)`
+#   returns True if `A` is a subclass of `B`
+
+print("isinstance(v1, OpOverloadDemo): {}".format(isinstance(v1, OpOverloadDemo)))
+# >>> isinstance(v1, OpOverloadDemo): True
+
+foo = Foo(1, 2)
+print("isinstance(foo, OpOverloadDemo): {}".format(isinstance(foo, OpOverloadDemo)))
+# >>> isinstance(foo, OpOverloadDemo): False
+
+
+class Root:
+    pass
+
+
+class Branch1(Root):
+    pass
+
+
+class Branch2(Root):
+    pass
+
+
+class Leaf(Branch1, Branch2):
+    pass
+
+
+print(issubclass(Branch1, Root)) # True
+print(issubclass(Branch1, Root)) # True
+print(issubclass(Leaf, Root)) # True
+print(issubclass(Root, Leaf)) # False
+
+# behavior of these two methods can be overridden with
+# - `__instancecheck__`, and
+# - `__subclasscheck__`
+# to support duck-typing scenarios where a class doesn't
+# match type constraints, but does match functional
+# "contract" constraints
+
+# RESUME @ Abstract Base Classes
