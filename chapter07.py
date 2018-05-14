@@ -747,4 +747,126 @@ print(issubclass(Root, Leaf)) # False
 # match type constraints, but does match functional
 # "contract" constraints
 
-# RESUME @ Abstract Base Classes
+# Abstract Base Classes
+
+# - defined using the `abc` module
+#   - `ABCMeta`, `@abstractmethod`, `@abstractproperty`
+#   - cannot be instantiated directly
+#   - requires methods and properties to be implemented in derived classes
+#   - doesn't check params on methods
+#   - it can define concrete methods to be used in derived classes
+
+from abc import ABCMeta, abstractmethod, abstractproperty
+class AbstractDemo(metaclass=ABCMeta):
+    @abstractmethod
+    def foo(self, a, b):
+        pass
+
+    @abstractproperty
+    def bar(self):
+        pass
+
+    def bat(self):
+        print("bat in AbstractDemo")
+
+
+a = AbstractDemo()
+# >>> --------------------------------------------------------------------------
+# >>> TypeError                                 Traceback (most recent call last)
+# >>> <ipython-input-2-406544d0f1a2> in <module>()
+# >>> ----> 1 a = AbstractDemo()
+# >>> 
+# >>> TypeError: Can't instantiate abstract class AbstractDemo with abstract methods bar, foo    
+
+
+class ConcreteDemo(AbstractDemo):
+    def foo(self, a, b):
+        print("foo in ConcreteDemo: {}, {}".format(a, b))
+
+    @property
+    def bar(self):
+        return "bar"
+
+
+c = ConcreteDemo()
+c.foo(1, 2)
+# >>> foo in ConcreteDemo: 1, 2
+c.bar # >>> 'bar'
+c.bat()
+# >>> bat in AbstractDemo
+
+# - pre-existing classes can be registered to belong to abstract base class
+#   via the `register` method
+
+
+class RegisterDemo():
+    pass
+
+AbstractDemo.register(RegisterDemo)
+
+rd = RegisterDemo()
+issubclass(RegisterDemo, AbstractDemo) # >>> True
+
+# note that registration _didn't_ check to ensure that the registered
+# class implements the required abstract methods and properties
+
+# - built-in types are under a relatively flat hierarchy (based on `Object`)
+# - ABC module allows user-driven organization of existing classes into
+#   custom hierarchy for app specific purposes
+
+# ## Metaclasses
+
+# - a metaclass is an object that knows how to create and manage classes
+# - default metaclass of user defined classes is `type`
+
+class MetaDemo():
+    pass
+
+# class definition _itself_ becomes an object
+isinstance(MetaDemo, object) # >>> True
+
+type(MetaDemo) # >>> type
+
+# when a new class is defined, the following code steps occur:
+class_name = "MetaDemo"
+class_parents = (object,)
+class_body = "pass"
+class_dict = {}
+
+exec(class_body, globals(), class_dict)
+
+MetaDemo = type(class_name, class_parents, class_dict)
+
+# we could create a class taking the same steps explicitly
+
+class_name = "MetaDemo2"
+class_parents = (object,)
+class_body = """
+def display(self):
+    print("displaying MetaDemo2")
+"""
+class_dict = {}
+
+exec(class_body, globals(), class_dict)
+
+MetaDemo2 = type(class_name, class_parents, class_dict)
+
+# ----
+
+m2 = MetaDemo2()
+m2.display() # >>> displaying MetaDemo2
+
+# the last step of the above process, where `type` is invoked,
+# can be customized by providing a metaclass in the base classes
+# defined on a class; e.g.:
+# `class MetaDemo2(metaclass=type): pass`
+
+# - metaclass resolution chain:
+#   - if `metaclass` provided in class base classes, use that
+#   - look at first base class type provided, use metaclass of that
+#   - look for a global `__metaclass__` variable, use that
+#   - finally, it will use the default `__metaclass__` value
+#     (`type()` in P3)
+
+# RESUME @ "The primary use of metaclasses is in frameworks..."
+
