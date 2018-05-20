@@ -868,5 +868,35 @@ m2.display() # >>> displaying MetaDemo2
 #   - finally, it will use the default `__metaclass__` value
 #     (`type()` in P3)
 
-# RESUME @ "The primary use of metaclasses is in frameworks..."
+# primary use of metaclasses is to allow asserting more control over
+# the definition of user defined objects
+# e.g.:
+# - require that all public methods are documented
+# - inspecting and gathering information about class definitions
+# - alter contents of class def prior to class creation
+
+# note: avoid using metaclasses to define functionality that
+# doesn't adhere to the normal coding rules expected for classes
+
+# ## Class Decorators
+
+# used to perform some kind of extra processing after a class is
+# defined
+#
+# class decorator: a function that take a class as input and
+#   returns a class as output
+
+
+def log_class(cls):
+    print("class created: {}".format(cls.__clsid__))
+    return cls
+
+
+@log_class
+class ClassDecDemo():
+    __clsid__ = "some_id"
+
+# >>> class created: some_id
+    
+
 
