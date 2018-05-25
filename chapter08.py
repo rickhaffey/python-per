@@ -134,4 +134,49 @@ else:
 #   - 3. placing module files within that directory
 # - can contain 'sub-packages'
 
-# RESUME @ ## Packages
+# import statement with packages:
+# - `import level1.level2.level3.foo`
+#   - imports module `foo`
+#   - all calls to methods within foo must be prefixed with `level1.level2.level3.foo.`
+# - `from level1.level2.level3 import foo`
+#   - imports module `foo`
+#   - allows calling methods in `foo` with `foo.` prefix
+# - `from level1.level2.level3.foo import method1`
+#   - loads foo but only imports `method1`, which can be called directly
+
+# at first import of any package, all code in `__init__.py` is executed
+
+# import *:
+# - `from level1.level2.level3 import *`
+#    - will only import the names defined in the `__all__` list within `__init__.py`
+
+# within another module in the same package:
+# - e.g. with level1.level2.level3.bar:
+#   `from level1.level2.level3 import foo`
+#   OR
+#   `from . import foo`
+# - !note: for relative packages, don't use `import foo`
+#   - python will look in std lib
+#   - if not present, error
+#   - if there _is_ a module with that name, it will load _that_
+#     rather than the desired, sibling module
+# - to load from another level directory in the same package
+#   - `from ..level2 import baz`
+# - relative imports
+#   - can only use the `from {module} import {symbol}` form
+#   - symbol must be a valid identifier
+#   - can only refer to other symbols within the same package hierarchy
+
+# importing a pkg name alone doesn't automatically import all submodules
+# but, if the __init__.py file(s) in those packages have relative
+# imports of the contained modules, then the bare package import will
+# indirectly import those modules as a result of the code in `__init__.py`
+# running
+
+# during package import, python defines a `__path__` variable available
+# within `__init__.py` containing the list of directories to search
+# when looking for a pkg
+# - initially set with an entry to the containing directory of the package
+# - `__init__.py` can add additional search directories if needed
+
+# RESUME @ DISTRIBUTING PYTHON PROGRAMS AND LIBRARIES
