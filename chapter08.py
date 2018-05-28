@@ -179,4 +179,54 @@ else:
 # - initially set with an entry to the containing directory of the package
 # - `__init__.py` can add additional search directories if needed
 
-# RESUME @ DISTRIBUTING PYTHON PROGRAMS AND LIBRARIES
+# ## Distributing Python Programs And Libraries
+
+# - use `distutils` module
+# - create a directory containing
+#   - packages, modules
+#   - scripts
+#   - documentation (including README)
+# - organize code so it runs via `python` from the top level directory
+# - create files `setup.py` with code similar to
+
+from distutils.core import setup
+
+setup(
+    name="{package name}",
+    version="{version}",
+    py_modules=['{module1}', '{module2}', 'etc.'],
+    packages = ['{package1}', '{package2}', 'etc.'],
+    scripts = ['{script1}', 'etc.']
+)
+
+# - additional parameters can be applied to method
+# - run `python3 setup.py sdist` to create a source distribution
+#   - will create an archive file in the `dist` subdirectory
+#   - file can be distributed to others for installation
+#   - to install, unzip file, then run `python setup.py install`
+#   - installs package to local distribution:
+#     - packages to `site-packages`
+#     - scripts to the directory of the python interpreter
+# - during install, process will rewrite python shebang line
+#   to match location of local python install
+# - `python setup.py bdist` will build a binary distribution
+
+# to create a setuptools .egg file, adjust setup as follows:
+
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
+setup(name="foo", ...)
+
+# ## Installing Third-Party Libraries
+
+# typically installed to `site-packages`
+# to install in a per-user library, use `python setup.py install --user`
+# to install to custom location: `python setup.py install --prefix {path}`
+# setuptools includes an `easy_install` to streamline install process
+# `python setup.py register` to register to PyPI
+    
+
+
