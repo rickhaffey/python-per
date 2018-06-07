@@ -85,8 +85,40 @@ if __name__ == '__main__':
 # - `failIf`: fails if condition holds
 # - `failureException`: set to the last exception raised in a test
 
-# RESUME @ ## The Python Debugger and `pdb` Module
+# ## The Python Debugger and `pdb` Module
 
-        
+#  pdb module provides a command-based debugger
+#  `run` - runs a statement under the debugger;
+#  - can optionally provide global and local context to run under
+#  `runeval` - evaluates an expression under debugger and returns result
+#  - can optionally provide global and local context to run under
+#  `runcall` - calls a faunction under debugger and returns result
+#  - can pass necessary arguments
+#  `set_trace` - can be placed within code to run;
+#   will break into debugger when that line is executed
+#  `post_mortem` - starts post-mortem debugging of a traceback object
+#  `pm` - enters post-mortem debugging using last exception
 
-    
+import pdb
+import random
+
+def demo_method():
+    pdb.set_trace()
+    sum = 0
+    for i in range(1, 11):
+        x = random.randint(1, i)
+        y = 2
+        result = x + y
+        print("iteration {}: {} + {} = {}".format(i, x, y, result))
+        sum += result
+
+    return sum
+
+demo_method()
+
+# > <ipython-input-12-0c52d230227b>(3)demo_method()
+# -> sum = 0
+
+
+
+
