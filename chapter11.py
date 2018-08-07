@@ -85,6 +85,8 @@ if __name__ == '__main__':
 # - `failIf`: fails if condition holds
 # - `failureException`: set to the last exception raised in a test
 
+# TODO: In depth review of pytest
+
 # ## The Python Debugger and `pdb` Module
 
 #  pdb module provides a command-based debugger
@@ -119,6 +121,44 @@ demo_method()
 # > <ipython-input-12-0c52d230227b>(3)demo_method()
 # -> sum = 0
 
+# TODO: revisit Debugger section
+
+# ## Program Profiling
+
+# - profile module; cProfile module - used to collect profile info
+# - cProfile: faster and more modern
+# - todo: investigate pstats module
+
+
+# ## Tuning and Optimization
+
+# ### Time Measurements
+
+# - time.clock  # cpu time
+# - time.time  # wall time
+# - timeit module
+
+# ### Memory Measurements
+
+# - sys.getsizeof()  # bytes
+
+# ### Disassembly
+
+# - dis.dis()
+
+# ### Tuning Strategies
+
+# * Understand your program
+# * Understand algorithms
+# * Use the built-in types
+# * Don't add layers
+# * Know how classes and instances build upon dictionaries
+# * Use `__slots__`
+# * Avoid the (.) operator
+# * Use exceptions to handle uncommon cases
+# * Avoid exceptions for common cases
+# * Embrace functional programming and iteration
+# * Use decorators and metaclasses
 
 
 
